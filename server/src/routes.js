@@ -97,13 +97,13 @@ router.post('/login', async (req, res) => {
 	  }
 });
 
-// Get all books
+// Get all books anybody can access this route
 router.get("/books", async (req, res) => {
 	const books = await Book.find();
 	res.send(books);
 });
-
-router.post("/books", async (req, res) => {
+// Add a new book only employees or Authorizers can access
+router.post("/books", auth, empCheck, async (req, res) => {
 	const book = new Book({
 		title: req.body.title,
 		desc: req.body.content,
@@ -113,7 +113,7 @@ router.post("/books", async (req, res) => {
 	await book.save()
 	res.send(book)
 });
-
+// Gets a specific book, anybody can access this
 router.get("/books/:id", async (req, res) => {
     try {
 		const book = await Book.findOne({ _id: req.params.id })
@@ -124,8 +124,8 @@ router.get("/books/:id", async (req, res) => {
 	}
 });
 
-// Update a book
-router.patch("/books/:id", async (req, res) => {
+// Update a book only employees or Authorizers can access
+router.patch("/books/:id", auth, empCheck, async (req, res) => {
 	try {
 		const book = await Book.findOne({ _id: req.params.id })
 
@@ -153,8 +153,8 @@ router.patch("/books/:id", async (req, res) => {
 	}
 })
 
-// Delete a book
-router.delete("/books/:id", async (req, res) => {
+// Delete a book only employees or Authorizers can access
+router.delete("/books/:id", auth, empCheck, async (req, res) => {
 	try {
 		await Book.deleteOne({ _id: req.params.id })
 		res.status(204).send()
@@ -164,7 +164,7 @@ router.delete("/books/:id", async (req, res) => {
 	}
 })
 
-// Get all users
+// Get all users only employees or Authorizers can access
 router.get("/users", auth, empCheck, async (req, res) => {
 	try{
 		const users = await User.find();
@@ -177,7 +177,8 @@ router.get("/users", auth, empCheck, async (req, res) => {
 	
 });
 
-router.post("/users", async (req, res) => {
+// Add a new user only employees or Authorizers can access
+router.post("/users", auth, empCheck, async (req, res) => {
 	const user = new User({
 		name: req.body.name,
 		ownedBooks: req.body.ownedBooks,
@@ -189,7 +190,8 @@ router.post("/users", async (req, res) => {
 	res.send(user)
 });
 
-router.get("/users/:id", async (req, res) => {
+// Get individual user only employees or Authorizers can access
+router.get("/users/:id", auth, empCheck, async (req, res) => {
     try {
 		const user = await User.findOne({ _id: req.params.id })
 		res.send(user)
@@ -199,8 +201,8 @@ router.get("/users/:id", async (req, res) => {
 	}
 });
 
-// Update a user
-router.patch("/users/:id", async (req, res) => {
+// Update a user only employees or Authorizers can access
+router.patch("/users/:id", auth, empCheck, async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.params.id })
 
@@ -232,7 +234,7 @@ router.patch("/users/:id", async (req, res) => {
 })
 
 // Delete a user
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", auth, empCheck, async (req, res) => {
 	try {
 		await User.deleteOne({ _id: req.params.id })
 		res.status(204).send()
@@ -243,12 +245,12 @@ router.delete("/users/:id", async (req, res) => {
 })
 
 // Get all requests
-router.get("/requests", async (req, res) => {
+router.get("/requests", auth, empCheck, async (req, res) => {
 	const requests = await bookRequest.find();
 	res.send(requests);
 });
 
-router.post("/requests", async (req, res) => {
+router.post("/requests", auth, async (req, res) => {
 	const request = new bookRequest({
 		title: req.body.title,
 		book: req.body.book,
@@ -260,7 +262,7 @@ router.post("/requests", async (req, res) => {
 	res.send(request)
 });
 
-router.get("/requests/:id", async (req, res) => {
+router.get("/requests/:id", auth, async (req, res) => {
     try {
 		const request = await bookRequest.findOne({ _id: req.params.id })
 		res.send(request)
@@ -270,8 +272,8 @@ router.get("/requests/:id", async (req, res) => {
 	}
 });
 
-// Update a user
-router.patch("/requests/:id", async (req, res) => {
+// Update a request
+router.patch("/requests/:id", auth, async (req, res) => {
 	try {
 		const request = await bookRequest.findOne({ _id: req.params.id })
 
@@ -303,7 +305,7 @@ router.patch("/requests/:id", async (req, res) => {
 })
 
 // Delete a user
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", auth, empCheck, async (req, res) => {
 	try {
 		await bookRequest.deleteOne({ _id: req.params.id })
 		res.status(204).send()
