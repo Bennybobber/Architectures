@@ -7,8 +7,8 @@ const schema = mongoose.Schema({
     username: {type: String,required: true , unique: true},
     ownedBooks: {type: Array, default: []},
     requests: {type: Array, default: []},
-    isEmployee: {type: Boolean, required: true, default: false},
-    isAuthorizer: {type: Boolean, required: true, default: false},
+    isEmployee: {type: Boolean, default: false},
+    isAuthorizer: {type: Boolean, default: false},
     token: { type: String },
 })
 

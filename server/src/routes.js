@@ -3,11 +3,18 @@ const Book = require("./models/Book");
 const User = require('./models/User');
 const bookRequest = require('./models/Request');
 const router = express.Router();
-const jwt = require('express-jwt');
+const jwtz = require('express-jwt');
+const jwt = require('jsonwebtoken');
 const jwksRsa = require('jwks-rsa');
-const { application } = require("express");
+const  bcrypt = require('bcryptjs');
+const auth = require("./authentication/auth");
+const empCheck = require('./authentication/employeeCheck');
 
-application.post("/register", (req, res) => {
+router.post("/welcome", auth, (req, res) => {
+  res.status(200).send("Welcome 🙌 ");
+});
+
+router.post("/register", async (req, res) => {
   // Our register logic starts here
   try {
     // Get user input
@@ -56,8 +63,38 @@ application.post("/register", (req, res) => {
   // Our register logic ends here
 });
 
-application.post('/login', (req, res) => {
-
+router.post('/login', async (req, res) => {
+	try {
+		// Get user input
+		const { username, password } = req.body;
+	
+		// Validate user input
+		if (!(username && password)) {
+		  res.status(400).send("Additional input is required");
+		}
+		// check to see if user exists in the database
+		const user = await User.findOne({ username });
+	
+		if (user && (await bcrypt.compare(password, user.password))) {
+		  // Create token
+		  const token = jwt.sign(
+			{ user_id: user._id, username },
+			process.env.TOKEN_KEY,
+			{
+			  expiresIn: "2h",
+			}
+		  );
+	
+		  // save user token
+		  user.token = token;
+	
+		  // user
+		  res.status(200).json(user);
+		}
+		res.status(400).send("Invalid Credentials");
+	  } catch (err) {
+		console.log(err);
+	  }
 });
 
 // Get all books
@@ -128,9 +165,16 @@ router.delete("/books/:id", async (req, res) => {
 })
 
 // Get all users
-router.get("/users", async (req, res) => {
-	const users = await User.find();
-	res.send(users);
+router.get("/users", auth, empCheck, async (req, res) => {
+	try{
+		const users = await User.find();
+		res.send(users);
+	} catch {
+		res.status(500);
+		res.send({ error: 'Server Error Occured'});
+	}
+	
+	
 });
 
 router.post("/users", async (req, res) => {
