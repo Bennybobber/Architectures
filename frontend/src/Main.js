@@ -1,14 +1,16 @@
-import React, { Component } from "react";
+import React, { Component, useState  } from "react";
 import {
     BrowserRouter,
     Routes,
     Route,
     NavLink
   } from "react-router-dom";
-import Home from "./Home";
-import Stuff from "./Stuff";
-import Contact from "./Contact";
- 
+import Home from "./Views/Home";
+import Stuff from "./Views/Stuff";
+import Contact from "./Views/Contact";
+import Login from "./Views/Login"; 
+import { AppContext } from "./lib/contextLib";
+const [isAuthenticated, userHasAuthenticated] = useState(false);
 class Main extends Component {
     render() {
       return (
@@ -24,6 +26,7 @@ class Main extends Component {
               <Route path="/" element={<Home />}/>
               <Route path="/stuff" element={<Stuff />}/>
               <Route path="/contact" element={<Contact />}/>
+              <Route path="/login" element={<Login />}/>
             </Routes>
             </div>
           </div>

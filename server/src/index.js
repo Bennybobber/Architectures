@@ -17,10 +17,10 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 // enabling CORS for all requests
-app.use(cors());
+
 
 // adding morgan to log HTTP requests
-app.use(morgan('combined'));
+
 
 // start the in-memory MongoDB instance
 console.log(process.env.API_PORT);
@@ -32,6 +32,8 @@ mongoose
 	.then(() => {
 		const app = express()
     	app.use(express.json())
+		app.use(cors());
+		app.use(morgan('combined'));
     	app.use("/api", routes);
 
 		app.listen(process.env.API_PORT, () => {
