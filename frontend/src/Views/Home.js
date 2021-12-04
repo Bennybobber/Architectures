@@ -1,26 +1,15 @@
-import React, { Component, useState } from "react";
- 
-class Home extends Component {
-  state = {
-    books: []
-  }
-  componentDidMount() {
-    if (this.useState.user !== undefined){
-      console.log(this.useState.persons);
-    }
-  }
-  render() {
-    return (
-      <div>
-        <h2>Available Books For Request</h2>
-        <p>Have a browse of books, and if you're logged in you can even 
-          eat a book
-        </p>
- 
-        <p>Duis a turpis sed lacus dapibus elementum sed eu lectus.</p>
+import React from "react";
+import "../styles/home.css";
+import { useAppContext } from "../lib/contextLib";
+
+
+export default function Home() {
+  return (
+    <div className="Home">
+      <div className="lander">
+        <h1>Scratch</h1>
+        <p className="text-muted">A simple note taking app</p>
       </div>
-    );
-  }
+    </div>
+  );
 }
- 
-export default Home;

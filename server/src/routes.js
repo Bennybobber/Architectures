@@ -87,14 +87,17 @@ router.post('/login', async (req, res) => {
 	
 		  // save user token
 		  user.token = token;
-	
+		  // remove the password since it's not needed at the frontend
+		  user.password = undefined;
 		  // user
 		  res.status(200).json(user);
 		}
-		res.status(400).send("Invalid Credentials");
+		res.status(404).send("Invalid Credentials");
 	  } catch (err) {
 		console.log(err);
+		res.status(500).send("Internal Server Error");
 	  }
+	  
 });
 
 // Get all books anybody can access this route
@@ -167,7 +170,7 @@ router.delete("/books/:id", auth, empCheck, async (req, res) => {
 // Get all users only employees or Authorizers can access
 router.get("/users", auth, empCheck, async (req, res) => {
 	try{
-		const users = await User.find();
+		const users = await User.find().select("-password");;
 		res.send(users);
 	} catch {
 		res.status(500);
@@ -193,7 +196,7 @@ router.post("/users", auth, empCheck, async (req, res) => {
 // Get individual user only employees or Authorizers can access
 router.get("/users/:id", auth, empCheck, async (req, res) => {
     try {
-		const user = await User.findOne({ _id: req.params.id })
+		const user = await User.findOne({ _id: req.params.id }).select("-password");
 		res.send(user)
 	} catch {
 		res.status(404)
