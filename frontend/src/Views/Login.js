@@ -11,7 +11,9 @@ export default function Login() {
   let { user, setUser } = useAppContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  
+  const [errMsg, setErrMsg] = useState("");
+  
   React.useEffect(() => {
     onLoad();
   }, []);
@@ -36,22 +38,28 @@ export default function Login() {
       {
         username:username,
         password:password
-      }
+      },
+      {
+        validateStatus: false
+      } 
     )
       .then(res => {
-        console.log('b');
-        console.log(res.status);
-        const persons = res.data;
-        user = persons
-        localStorage.setItem('user', JSON.stringify(user));
-        userHasAuthenticated(true);
-        window.location = '/';
+        console.log(res.data);
+        if (res.status === 200){
+          const persons = res.data;
+          user = persons
+          localStorage.setItem('user', JSON.stringify(user));
+          userHasAuthenticated(true);
+          window.location = '/';
+        }
+        else{
+          setErrMsg(res.data);
+        }
       })
     } catch (err) {
-      console.log('a');
       alert(err.message);
+      setErrMsg(err.data);
     }
-    console.log('ab');
   }
 
   return (
@@ -77,6 +85,8 @@ export default function Login() {
         <Button block size="lg" type="submit" disabled={!validateForm()}>
           Login
         </Button>
+        { errMsg &&
+          <h3 className="error"> { errMsg } </h3> }
       </Form>
     </div>
   );
