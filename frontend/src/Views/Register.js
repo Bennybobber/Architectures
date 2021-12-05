@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useAppContext } from "../lib/contextLib";
 import "../styles/login.css"
 
-export default function Login() {
+export default function Register() {
   const { isAuthenticated ,userHasAuthenticated } = useAppContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
