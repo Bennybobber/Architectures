@@ -20,6 +20,7 @@ router.post("/register", async (req, res) => {
     // Get user input
     const { firstName, lastName, username, password } = req.body;
 
+	
     // Validate user input
     if (!(username && password && firstName && lastName)) {
       res.status(400).send("Missing fields from request");
@@ -28,14 +29,14 @@ router.post("/register", async (req, res) => {
     // check if user already exist
     // Validate if user exist in our database
     const oldUser = await User.findOne({ username });
-
+	console.log(username);
     if (oldUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+	  
+      return res.status(409).send("User Already Exists. Please Login");
     }
 
     //Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
-
     // Create user in our database
     const user = await User.create({
 		firstName,
@@ -54,11 +55,12 @@ router.post("/register", async (req, res) => {
     );
     // save user token
     user.token = token;
-
+	user.password = undefined;
     // return new user
     res.status(201).json(user);
   } catch (err) {
     console.log(err);
+	res.status(500).send("An Interal Error Has Occured");
   }
   // Our register logic ends here
 });

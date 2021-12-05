@@ -1,0 +1,14 @@
+.error{
+    margin-top: 2%;
+    border-style: solid;
+    padding: 1%;
+    background-color: red;
+    text-align: center;
+}
+.Form {
+    border-style: solid;
+    padding: 2%;
+}
+.Form h1{
+    text-align: center;
+}
