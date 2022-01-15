@@ -11,7 +11,6 @@ import jwt_decode from "jwt-decode";
 
 function Main() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
-  const [user, setUser] = useState({});
   useEffect(() => {
     onLoad();
   }, []);
@@ -41,7 +40,7 @@ function Main() {
       <Navbar collapseOnSelect bg="light" expand="md" className="mb-3">
         <LinkContainer to="/">
           <Navbar.Brand className="font-weight-bold text-muted">
-            Scratch
+            Bookies
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle />
@@ -51,8 +50,8 @@ function Main() {
             <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
             ) : (
               <>
-                <LinkContainer to="/signup">
-                  <Nav.Link>Signup</Nav.Link>
+                <LinkContainer to="/register">
+                  <Nav.Link>Register</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/login">
                   <Nav.Link>Login</Nav.Link>
@@ -62,7 +61,7 @@ function Main() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated, setUser, user }}>
+      <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated}}>
       <Routes />
       </AppContext.Provider>
 
@@ -71,6 +70,11 @@ function Main() {
   function handleLogout() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
+  }
+  function showRequests(){
+    if (isAuthenticated) {
+      return <Navbar.Brand className="font-weight-bold text-muted"> Requests </Navbar.Brand>
+    }
   }
   
 }
