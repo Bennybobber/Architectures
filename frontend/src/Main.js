@@ -71,6 +71,11 @@ function Main() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
   }
+  function showRequests(){
+    if (isAuthenticated) {
+      return <Navbar.Brand className="font-weight-bold text-muted"> Requests </Navbar.Brand>
+    }
+  }
   
 }
 
