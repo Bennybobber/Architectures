@@ -6,6 +6,7 @@ import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
 import "./styles/app.css"
 import jwt_decode from "jwt-decode";
+import NavLink from "react-bootstrap/esm/NavLink";
 
 
 
@@ -40,8 +41,20 @@ function Main() {
       <Navbar collapseOnSelect bg="light" expand="md" className="mb-3">
         <LinkContainer to="/">
           <Navbar.Brand className="font-weight-bold text-muted">
-            Bookies
+            Home
           </Navbar.Brand>
+        </LinkContainer>
+        <LinkContainer to ="/makeRequest">
+        <Nav.Link>Make Request</Nav.Link>
+        </LinkContainer>
+        <LinkContainer to="/requests">
+        {isAuthenticated ? (
+            <Nav.Link>Requests</Nav.Link>
+            ) : (
+              <>
+              </>
+            )}
+            
         </LinkContainer>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
@@ -73,7 +86,9 @@ function Main() {
   }
   function showRequests(){
     if (isAuthenticated) {
-      return <Navbar.Brand className="font-weight-bold text-muted"> Requests </Navbar.Brand>
+      <LinkContainer to="/requests">
+            <Nav.Link>Requests</Nav.Link>
+        </LinkContainer>
     }
   }
   
