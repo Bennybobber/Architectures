@@ -3,14 +3,13 @@ const Book = require("./models/Book");
 const User = require('./models/User');
 const bookRequest = require('./models/Request');
 const router = express.Router();
-const jwtz = require('express-jwt');
 const jwt = require('jsonwebtoken');
-const jwksRsa = require('jwks-rsa');
 const  bcrypt = require('bcryptjs');
 const auth = require("./authentication/auth");
 const empCheck = require('./authentication/employeeCheck');
+const jwt_decode = require('jwt-decode');
 
-router.post("/welcome", auth, (req, res) => {
+router.get("/salad/:id", async (req, res) => {
   res.status(200).send("Welcome 🙌 ");
 });
 
@@ -257,19 +256,34 @@ router.get("/requests", auth, empCheck, async (req, res) => {
 
 router.post("/requests", auth, async (req, res) => {
 	const request = new bookRequest({
-		title: req.body.title,
-		book: req.body.book,
+		bookName: req.body.bookName,
+		bookDesc: req.body.bookDesc,
+		bookGenre: req.body.bookGenre,
+		bookPrice: req.body.bookPrice,
         date: req.body.date,
-        userId: req.body.userId,
-		isApproved: req.body.isApproved,
+        userId: jwt_decode(req.body.token).user_id,
+		isApproved: false,
+		assignedTo: false,
 	})
 	await request.save()
+	console.log(request);
 	res.send(request)
 });
 
 router.get("/requests/:id", auth, async (req, res) => {
+	console.log("Here!");
     try {
 		const request = await bookRequest.findOne({ _id: req.params.id })
+		res.send(request)
+	} catch {
+		res.status(404)
+		res.send({ error: "Request doesn't exist!" })
+	}
+});
+
+router.get("/user/requests/:id", auth, async (req, res) => {
+    try {
+		const request = await bookRequest.find({ userId: req.params.id })
 		res.send(request)
 	} catch {
 		res.status(404)
@@ -282,43 +296,48 @@ router.patch("/requests/:id", auth, async (req, res) => {
 	try {
 		const request = await bookRequest.findOne({ _id: req.params.id })
 
-		if (req.body.title) {
-			request.title = req.body.title
+		if (req.body.bookName != "") {
+			request.bookName = req.body.bookName
 		}
-
-		if (req.body.book) {
-			request.book = req.body.book
+		if (req.body.bookDesc != "") {
+			request.bookDesc = req.body.bookDesc
 		}
-
-        if (req.body.date) {
+		if (req.body.bookGenre != "") {
+			request.bookGenre = req.body.bookGenre
+		}
+		if (req.body.bookAuthor != "") {
+			request.bookAuthor = req.body.bookAuthor
+		}
+		if (req.body.bookPrice != "") {
+			request.bookPrice = req.body.bookPrice
+		}
+        if (req.body.date != "") {
 			request.date = req.body.date
-		}
-
-        if (req.body.userId) {
-			request.userId = req.body.userId
 		}
 		if (req.body.isApproved) {
 			request.isApproved = req.body.isApproved
+		}
+		if (req.body.assignedTo) {
+			request.assignedTo = req.body.assignedTo
 		}
 
 		await request.save()
 		res.send(request)
 	} catch {
 		res.status(404)
-		res.send({ error: "Request doesn't exist!" })
+		res.send({ error: "Book request doesn't exist!" })
 	}
 })
 
-// Delete a user
-router.delete("/users/:id", auth, empCheck, async (req, res) => {
+// Delete a book request
+router.delete("/requests/:id", auth, empCheck, async (req, res) => {
 	try {
 		await bookRequest.deleteOne({ _id: req.params.id })
 		res.status(204).send()
 	} catch {
 		res.status(404)
-		res.send({ error: "Request doesn't exist!" })
+		res.send({ error: "Book request doesn't exist!" })
 	}
 })
-
 
 module.exports = router

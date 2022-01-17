@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from 'axios';
-import { useAppContext } from "../lib/contextLib";
 import jwt_decode from "jwt-decode";
 
 export default function MakeRequest() {
@@ -10,6 +9,7 @@ export default function MakeRequest() {
     const [isEmployee, setEmployee] = useState("");
     const [isAuthorizer , setAuthorizor]= useState("");
     const [errMsg, setErrMsg] = useState("");
+    const [succMsg, setSuccMsg] = useState("");
 
     const [bookName, setBookName] = useState("");
     const [bookDesc, setBookDesc] = useState("");
@@ -17,13 +17,12 @@ export default function MakeRequest() {
     const [bookGenre, setBookGenre] = useState("");
     const [bookAuthor, setBookAuthor] = useState("");
 
-    let user = {};
     useEffect(() => {
         onLoad();
     }, []);
     async function onLoad() {
         try {
-            user = JSON.parse(localStorage.getItem('user'));
+            let user = JSON.parse(localStorage.getItem('user'));
             console.log(user);
             const exp = jwt_decode(user.token);
             if (Date.now() >= exp * 1000){
@@ -37,7 +36,9 @@ export default function MakeRequest() {
         catch(e) {
         }
     }
-    
+    function validateForm() {
+        return bookName.length > 0;
+      }   
     if (isAuthenticated){
         return (
             <div class="Form">
@@ -56,7 +57,7 @@ export default function MakeRequest() {
                         />
                     </Form.Group>
                     <Form.Group size="lg" controlId = "bookAuthor">
-                        <Form.Label> Name of book </Form.Label>
+                        <Form.Label> Author of book </Form.Label>
                         <Form.Control
                             autoFocus
                             type="bookAuthor"
@@ -91,11 +92,18 @@ export default function MakeRequest() {
                             onChange = {(e) => setBookGenre(e.target.value)}
                         />
                     </Form.Group>
-                    <Button block size="lg" type="submit" >
+                    <Button block size="lg" type="submit" disabled={!validateForm()} >
                         Submit Request
                     </Button>
-                        { errMsg &&
-                            <h3 className="error"> { errMsg } </h3> }
+                    <>
+
+                        { errMsg ? (
+                            <h3 className="error"> { errMsg } </h3>
+                            ) : (
+                            <h3 className="success"> {succMsg} </h3>
+                            ) }
+                    </>
+                        
                 </Form>
             </div>
         );
@@ -108,5 +116,35 @@ export default function MakeRequest() {
         event.preventDefault();
         console.log(event);
         console.log(bookName);
+        try{
+            axios.post(`http://localhost:3001/api/requests`,
+              {
+                bookName:bookName,
+                bookDesc:bookDesc,
+                bookGenre: bookGenre,
+                bookPrice: bookPrice,
+                bookAuthor: bookAuthor,
+                date: Date.now(),
+                token: JSON.parse(localStorage.getItem('user')).token,
+              },
+              {
+                validateStatus: false
+              } 
+            )
+              .then(res => {
+                console.log(res.data);
+                if (res.status === 200){
+                    setSuccMsg("Successfully Created Ticket");
+
+                }
+                else{
+                  setErrMsg(res.data);
+                }
+              })
+            } catch (err) {
+              alert(err.message);
+              setErrMsg(err.data);
+            }
+          
     }
 }
