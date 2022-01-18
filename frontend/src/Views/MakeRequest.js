@@ -24,7 +24,7 @@ export default function MakeRequest() {
         try {
             let user = JSON.parse(localStorage.getItem('user'));
             console.log(user);
-            const exp = jwt_decode(user.token);
+            const exp = jwt_decode(user.token).exp;
             if (Date.now() >= exp * 1000){
                 userHasAuthenticated(false);
             }else {
@@ -41,8 +41,8 @@ export default function MakeRequest() {
       }   
     if (isAuthenticated){
         return (
-            <div class="Form">
-                <div class="heading">
+            <div className="Form">
+                <div className="heading">
                     <h1> Request A Book Form </h1>
                     <p> Please fill out the following form to request a new book in stock</p>
                 </div>
@@ -109,7 +109,7 @@ export default function MakeRequest() {
         );
     }
     return (
-        <h1> Please Log In With A Client Account </h1>
+        <h1> Please Log In With An Account To Make Book Requests </h1>
     )
 
     function handleSubmit(event) {

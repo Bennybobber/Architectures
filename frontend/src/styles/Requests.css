@@ -1,0 +1,9 @@
+.content {
+    width: 100%;
+    margin: auto;
+}
+.showRequests {
+    margin: auto;
+    text-align: center;
+    border-style: solid;
+}
