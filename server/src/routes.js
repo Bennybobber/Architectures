@@ -257,6 +257,7 @@ router.get("/requests", auth, empCheck, async (req, res) => {
 router.post("/requests", auth, async (req, res) => {
 	const request = new bookRequest({
 		bookName: req.body.bookName,
+		bookAuthor: req.body.bookAuthor,
 		bookDesc: req.body.bookDesc,
 		bookGenre: req.body.bookGenre,
 		bookPrice: req.body.bookPrice,
@@ -293,39 +294,11 @@ router.get("/user/requests/:id", auth, async (req, res) => {
 
 // Update a request
 router.patch("/requests/:id", auth, async (req, res) => {
-	try {
-		const request = await bookRequest.findOne({ _id: req.params.id })
-
-		if (req.body.bookName != "") {
-			request.bookName = req.body.bookName
-		}
-		if (req.body.bookDesc != "") {
-			request.bookDesc = req.body.bookDesc
-		}
-		if (req.body.bookGenre != "") {
-			request.bookGenre = req.body.bookGenre
-		}
-		if (req.body.bookAuthor != "") {
-			request.bookAuthor = req.body.bookAuthor
-		}
-		if (req.body.bookPrice != "") {
-			request.bookPrice = req.body.bookPrice
-		}
-        if (req.body.date != "") {
-			request.date = req.body.date
-		}
-		if (req.body.isApproved) {
-			request.isApproved = req.body.isApproved
-		}
-		if (req.body.assignedTo) {
-			request.assignedTo = req.body.assignedTo
-		}
-
-		await request.save()
-		res.send(request)
-	} catch {
-		res.status(404)
-		res.send({ error: "Book request doesn't exist!" })
+	try{
+		await bookRequest.findOneAndUpdate({ _id: req.params.id }, req.body)
+	} catch (e) {
+		res.status(500)
+		res.send({error: e})
 	}
 })
 

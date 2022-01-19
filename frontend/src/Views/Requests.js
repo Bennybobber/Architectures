@@ -44,12 +44,20 @@ export default function Requests() {
     const bookRequests = await request.data;
     
     setBookRequests(bookRequests);
+    console.log(bookRequests);
     
   }
 
   if (isAuthenticated) {
     const bookRequests = BookRequests?.map((request, i) => (
-      <li key={i} className="Arse"> {request.bookName}</li>
+      <Report key={request._id}
+        bookName = {request.bookName}
+        bookAuthor = {request.bookAuthor} 
+        bookDesc = {request.bookDesc}
+        bookPrice =  {request.bookPrice}
+        bookGenre =  {request.bookGenre}
+        bookId = {request._id}
+        />
     ));
         return (
             <div className = "content">
