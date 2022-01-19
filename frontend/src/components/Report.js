@@ -19,9 +19,26 @@ export default function Report(props) {
     const [bookPrice, setBookPrice] = useState(props.bookPrice);
     const [bookGenre, setBookGenre] = useState(props.bookGenre);
     const [bookAuthor, setBookAuthor] = useState(props.bookAuthor);
-    const routeChange = (bookId) =>{
-        let path = `edit/request/` + bookId;
-        history.push(path);
+    const cancelRequest = () =>{
+        if (window.confirm("Are you sure you want to delete this request?")){ 
+            const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            const config = {
+                headers: {
+                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                }
+            
+            }
+            try{
+                axios.delete(url, config)
+                .then(res => {
+                    console.log(res);
+                    window.location.reload(false);
+                })
+            }
+            catch (err) {
+                alert(err.message);
+            }
+    }
     }
     function handleSubmit(event) {
         event.preventDefault();
@@ -151,6 +168,9 @@ export default function Report(props) {
                         <div className = "buttonBox">
                             <Button variant="success" onClick={ () => setIsEdit(true)}>
                                 Edit Book Request
+                            </Button>
+                            <Button variant="danger" onClick={ () => cancelRequest()}>
+                                Delete Book Request
                             </Button>
                         </div>
                     </div>

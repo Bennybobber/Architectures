@@ -303,10 +303,10 @@ router.patch("/requests/:id", auth, async (req, res) => {
 })
 
 // Delete a book request
-router.delete("/requests/:id", auth, empCheck, async (req, res) => {
+router.delete("/requests/:id", auth, async (req, res) => {
 	try {
 		await bookRequest.deleteOne({ _id: req.params.id })
-		res.status(204).send()
+		res.status(204).send( { message: "Successfully Deleted Book Request"})
 	} catch {
 		res.status(404)
 		res.send({ error: "Book request doesn't exist!" })
