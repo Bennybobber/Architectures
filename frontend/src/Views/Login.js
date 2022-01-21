@@ -12,7 +12,7 @@ export default function Login() {
   
   const [errMsg, setErrMsg] = useState("");
   
-  React.useEffect(() => {
+  useEffect(() => {
     onLoad();
   }, []);
   

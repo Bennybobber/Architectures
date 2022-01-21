@@ -250,8 +250,14 @@ router.delete("/users/:id", auth, empCheck, async (req, res) => {
 
 // Get all requests
 router.get("/requests", auth, empCheck, async (req, res) => {
-	const requests = await bookRequest.find();
-	res.send(requests);
+	try{
+		const requests = await bookRequest.find();
+		res.send(requests);
+	} catch {
+		res.status(500);
+		res.send({error: "An unknown server error has occured"});
+	}
+	
 });
 
 router.post("/requests", auth, async (req, res) => {
@@ -264,7 +270,9 @@ router.post("/requests", auth, async (req, res) => {
         date: req.body.date,
         userId: jwt_decode(req.body.token).user_id,
 		isApproved: false,
-		assignedTo: false,
+		assignedTo: "",
+		needsMoreDetail: false,
+		needsAuthorizer: false,
 	})
 	await request.save()
 	console.log(request);
@@ -272,7 +280,6 @@ router.post("/requests", auth, async (req, res) => {
 });
 
 router.get("/requests/:id", auth, async (req, res) => {
-	console.log("Here!");
     try {
 		const request = await bookRequest.findOne({ _id: req.params.id })
 		res.send(request)

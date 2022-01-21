@@ -4,7 +4,6 @@ import Home from "./Views/Home";
 import NotFound from "./Views/NotFound";
 import Requests from "./Views/Requests";
 import MakeRequest from "./Views/MakeRequest";
-import Contact from "./Views/Contact";
 import Login from "./Views/Login";
 import Register from "./Views/Register"
 
@@ -23,6 +22,9 @@ export default function Routes() {
       </Route>
       <Route exact path="/requests">
         <Requests />
+      </Route>
+      <Route exact path ="/admin/requests">
+
       </Route>
       <Route exact path ="/makeRequest">
         <MakeRequest />

@@ -10,6 +10,8 @@ const schema = mongoose.Schema({
     userId: {type: String, required: true},
     isApproved: {type: Boolean, required: true},
     assignedTo: {type: String, required: false},
+    needsMoreDtail: {type: Boolean, required: false},
+    needsAuthorizer: {type: Boolean, required: false}
 })
 
 module.exports = mongoose.model("bookRequest", schema)

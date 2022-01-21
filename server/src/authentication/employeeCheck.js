@@ -4,7 +4,6 @@ const config = process.env;
 
 const  verifyRole = async (req, res, next) => {
     const user_id = req.user.user_id;
-    console.log(user_id);
     try{ 
         const user = await User.findOne({ _id: user_id })
 		if (user.isEmployee == true || user.isAuthorizer == true){

@@ -7,22 +7,28 @@ import { LinkContainer } from "react-router-bootstrap";
 import "./styles/app.css"
 import jwt_decode from "jwt-decode";
 import NavLink from "react-bootstrap/esm/NavLink";
+import { useHistory  } from 'react-router-dom';
 
 
 
 function Main() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const history = useHistory();
   useEffect(() => {
     onLoad();
-  }, []);
+  }, [userHasAuthenticated]);
   
   async function onLoad() {
     try {
       let user = JSON.parse(localStorage.getItem('user'));
       console.log(user);
-      const exp = jwt_decode(user.token);
-      if (Date.now() >= exp * 1000){
+      console.log("SANDWHICH");
+      const date = new Date();
+      const token = jwt_decode(user.token);
+      if ((date.getTime()/1000) > token.exp ){
         userHasAuthenticated(false);
+        localStorage.removeItem('user');
+        history.push("/login");
       }else {
         userHasAuthenticated(true);
       }
