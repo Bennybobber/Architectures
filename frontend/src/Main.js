@@ -7,12 +7,13 @@ import { LinkContainer } from "react-router-bootstrap";
 import "./styles/app.css"
 import jwt_decode from "jwt-decode";
 import NavLink from "react-bootstrap/esm/NavLink";
-import { useHistory  } from 'react-router-dom';
+import { Link, useHistory  } from 'react-router-dom';
 
 
 
 function Main() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [isAuthorizer , setAuthorizor]= useState(false);
   const history = useHistory();
   useEffect(() => {
     onLoad();
@@ -20,16 +21,17 @@ function Main() {
   
   async function onLoad() {
     try {
-      let user = JSON.parse(localStorage.getItem('user'));
-      console.log(user);
-      console.log("SANDWHICH");
+      const user = JSON.parse(localStorage.getItem('user'));
+      setAuthorizor(user.isAuthorizer);    
       const date = new Date();
       const token = jwt_decode(user.token);
+      
       if ((date.getTime()/1000) > token.exp ){
         userHasAuthenticated(false);
         localStorage.removeItem('user');
         history.push("/login");
       }else {
+        console.log("here");
         userHasAuthenticated(true);
       }
     }
@@ -62,6 +64,22 @@ function Main() {
             )}
             
         </LinkContainer>
+        <LinkContainer to="/admin/users">
+          {isAuthorizer ? (
+            <Nav.Link> Manage Users </Nav.Link>
+          ) : (
+            <>
+            </>
+          )}
+        </LinkContainer>
+        <LinkContainer to="/account/create">
+          {isAuthorizer ? (
+            <Nav.Link> Create Account </Nav.Link>
+          ) : (
+            <>
+            </>
+          )}
+          </LinkContainer>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <Nav activeKey={window.location.pathname}>
@@ -89,6 +107,7 @@ function Main() {
   function handleLogout() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
+    history.push("/");
   }
   function showRequests(){
     if (isAuthenticated) {

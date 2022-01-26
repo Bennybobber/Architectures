@@ -56,6 +56,7 @@ router.post("/register", async (req, res) => {
     user.token = token;
 	user.password = undefined;
     // return new user
+	console.log(user);
     res.status(201).json(user);
   } catch (err) {
     console.log(err);
@@ -183,15 +184,28 @@ router.get("/users", auth, empCheck, async (req, res) => {
 
 // Add a new user only employees or Authorizers can access
 router.post("/users", auth, empCheck, async (req, res) => {
-	const user = new User({
-		name: req.body.name,
-		ownedBooks: req.body.ownedBooks,
-        requests: req.body.requests,
-        isEmployee: req.body.isEmployee,
-		isAuthorizer: req.body.isAuthorizer,
-	})
-	await user.save()
-	res.send(user)
+	try{
+		const oldUser = await User.findOne({ username: req.body.username });
+    	if (oldUser) {
+			// username already exists, so return error
+      		return res.status(409).send("User Already Exists. Please Login");
+    	}
+		const user = new User({
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			password: req.body.password,
+			username: req.body.username,
+			isEmployee: req.body.isEmployee,
+			isAuthorizer: req.body.isAuthorizer,
+		})
+		await user.save();
+		res.status(201);
+		res.send({message:"User Successfully Created"});
+	} catch (error) {
+		res.status(500);
+		console.log(error);
+		res.send({error: error});
+	}
 });
 
 // Get individual user only employees or Authorizers can access

@@ -6,7 +6,8 @@ import Requests from "./Views/Requests";
 import MakeRequest from "./Views/MakeRequest";
 import Login from "./Views/Login";
 import Register from "./Views/Register"
-
+import ManageAccounts from "./Views/ManageAccounts";
+import CreateAccount from "./Views/CreateAccount";
 
 export default function Routes() {
   return (
@@ -23,11 +24,14 @@ export default function Routes() {
       <Route exact path="/requests">
         <Requests />
       </Route>
-      <Route exact path ="/admin/requests">
-
+      <Route exact path ="/admin/users">
+        <ManageAccounts />
       </Route>
       <Route exact path ="/makeRequest">
         <MakeRequest />
+      </Route>
+      <Route exact path ="/account/create">
+        <CreateAccount /> 
       </Route>
       <Route>
         <NotFound />

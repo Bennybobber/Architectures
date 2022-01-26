@@ -46,6 +46,7 @@ export default function Login() {
         if (res.status === 200){
           const persons = res.data;
           const user = persons
+          console.log(user);
           localStorage.setItem('user', JSON.stringify(user));
           userHasAuthenticated(true);
           window.location = '/';
