@@ -1,24 +1,15 @@
 // ./src/index.js
-
+require('dotenv').config();
 // importing the dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-
-// importing database dependencies
-const {startDatabase} = require('./database/mongo');
-const {insertAd, getAds} = require('./database/ads');
-
+const mongoose = require("mongoose");
+const routes = require("./routes");
 // defining the Express app
 const app = express();
-
-// defining an array to work as the database (temporary solution)
-const ads = [
-  {title: 'Hello, world (again)!'}
-];
-
 // adding Helmet to enhance your API's security
 app.use(helmet());
 
@@ -26,23 +17,31 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 // enabling CORS for all requests
-app.use(cors());
+
 
 // adding morgan to log HTTP requests
-app.use(morgan('combined'));
 
-// defining an endpoint to return all ads
-app.get('/', async (req, res) => {
-    res.send(await getAds());
-  });
-  
 
 // start the in-memory MongoDB instance
-startDatabase().then(async () => {
-    await insertAd({title: 'Hello, now from the in-memory database!'});
-  
-    // start the server
-    app.listen(3001, async () => {
-      console.log('listening on port 3001');
-    });
-  });
+console.log(process.env.API_PORT);
+mongoose
+	.connect(process.env.MONGO_URI,
+		{ 
+			useNewUrlParser: true,
+		})
+	.then(() => {
+		const app = express()
+    	app.use(express.json())
+		app.use(cors());
+		app.use(morgan('combined'));
+    	app.use("/api", routes);
+
+		app.listen(process.env.API_PORT, () => {
+			console.log("Server has started!")
+		})
+	})
+	.catch((error) => {
+		console.log("database connection failed. exiting now...");
+		console.error(error);
+		process.exit(1);
+	  });

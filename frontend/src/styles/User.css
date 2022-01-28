@@ -1,0 +1,25 @@
+.userBox {
+    width: 100%;
+    margin: auto;
+    padding: 1%;
+    border-bottom: solid;
+    border-left: solid;
+    border-right: solid;
+}
+.userBox:first-of-type{
+    border-top:solid;
+}
+h1 {
+    text-align: center;
+    font-weight: bold;
+    padding: 1.5rem;
+}
+
+.Buttons{
+    margin:auto;
+    width: 10%;
+}
+
+.button{
+    margin:auto;
+}
