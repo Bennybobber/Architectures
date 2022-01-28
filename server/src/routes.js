@@ -1,12 +1,8 @@
 const express = require("express");
-const User = require('./models/User');
-const bookRequest = require('./models/Request');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const  bcrypt = require('bcryptjs');
 const auth = require("./authentication/auth");
 const empCheck = require('./authentication/employeeCheck');
-const jwt_decode = require('jwt-decode');
+
 
 const {
 	getUsers,
@@ -14,99 +10,24 @@ const {
 	getSpecificUser,
 	deleteUser,
 	modifyUser,
+	registerUser,
+	loginUser,
 } = require('./controllers/users');
-router.get("/salad/:id", async (req, res) => {
-  res.status(200).send("Welcome 🙌 ");
-});
 
-router.post("/register", async (req, res) => {
-  // Our register logic starts here
-  try {
-    // Get user input
-    const { firstName, lastName, username, password } = req.body;
+const {
+	getAllRequests, 
+	makeRequest,
+	getRequest,
+	getUsersRequests,
+	updateRequest,
+	deleteRequest,
+} = require('./controllers/requests');
 
-	
-    // Validate user input
-    if (!(username && password && firstName && lastName)) {
-      res.status(400).send("Missing fields from request");
-    }
+// Registers a new client account that a client can make themselves
+router.post("/register", registerUser);
 
-    // check if user already exist
-    // Validate if user exist in our database
-    const oldUser = await User.findOne({ username });
-	console.log(username);
-    if (oldUser) {
-	  
-      return res.status(409).send("User Already Exists. Please Login");
-    }
-
-    //Encrypt user password
-    encryptedPassword = await bcrypt.hash(password, 10);
-    // Create user in our database
-    const user = await User.create({
-		firstName,
-    	lastName,
-    	username: username.toLowerCase(), // sanitize: convert email to lowercase
-    	password: encryptedPassword,
-    });
-
-    // Create token
-    const token = jwt.sign(
-      { user_id: user._id, username },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "2h",
-      }
-    );
-    // save user token
-    user.token = token;
-	user.password = undefined;
-    // return new user
-	console.log(user);
-    res.status(201).json(user);
-  } catch (err) {
-    console.log(err);
-	res.status(500).send("An Interal Error Has Occured");
-  }
-  // Our register logic ends here
-});
-
-router.post('/login', async (req, res) => {
-	try {
-		// Get user input
-		const { username, password } = req.body;
-	
-		// Validate user input
-		if (!(username && password)) {
-		  res.status(400).send("Additional input is required");
-		}
-		// check to see if user exists in the database
-		const user = await User.findOne({ username });
-	
-		if (user && (await bcrypt.compare(password, user.password))) {
-		  // Create token
-		  const token = jwt.sign(
-			{ user_id: user._id, username },
-			process.env.TOKEN_KEY,
-			{
-			  expiresIn: "2h",
-			}
-		  );
-	
-		  // save user token
-		  user.token = token;
-		  // remove the password since it's not needed at the frontend
-		  user.password = undefined;
-		  // user
-		  res.status(200).json(user);
-		}
-		res.status(404).send("Invalid Credentials");
-	  } catch (err) {
-		console.log(err);
-		res.status(500).send("Internal Server Error");
-	  }
-	  
-});
+// Logs in a user after checking credentials
+router.post('/login', loginUser);
 
 // Get all users only employees or Authorizers can access
 router.get("/users", auth, empCheck, getUsers);
@@ -124,78 +45,21 @@ router.patch("/users/:id", auth, empCheck, modifyUser);
 router.delete("/users/:id", auth, empCheck, deleteUser);
 
 // Get all requests
-router.get("/requests", auth, empCheck, async (req, res) => {
-	try{
-		const requests = await bookRequest.find();
-		res.send(requests);
-	} catch {
-		res.status(500);
-		res.send({error: "An unknown server error has occured"});
-	}
-	
-});
+router.get("/requests", auth, empCheck, getAllRequests);
 
-router.post("/requests", auth, async (req, res) => {
-	const request = new bookRequest({
-		bookName: req.body.bookName,
-		bookAuthor: req.body.bookAuthor,
-		bookDesc: req.body.bookDesc,
-		bookGenre: req.body.bookGenre,
-		bookPrice: req.body.bookPrice,
-        date: req.body.date,
-        userId: jwt_decode(req.body.token).user_id,
-		isApproved: false,
-		assignedTo: "",
-		needsMoreDetail: false,
-		needsAuthorizer: false,
-	})
-	await request.save()
-	console.log(request);
-	res.send(request)
-});
+// Makes a request based on incoming data
+router.post("/requests", auth, makeRequest);
 
-router.get("/requests/:id", auth, async (req, res) => {
-    try {
-		const request = await bookRequest.findOne({ _id: req.params.id })
-		res.send(request)
-	} catch {
-		res.status(404)
-		res.send({ error: "Request doesn't exist!" })
-	}
-});
+// Get a specific request based on ID given in param
+router.get("/requests/:id", auth, getRequest);
 
-router.get("/user/requests/:id", auth, async (req, res) => {
-    try {
-		const request = await bookRequest.find({ userId: req.params.id })
-		res.send(request)
-	} catch {
-		res.status(404)
-		res.send({ error: "Request doesn't exist!" })
-	}
-});
+// Get all the requests for a specific user
+router.get("/user/requests/:id", auth, getUsersRequests);
 
 // Update a request
-router.patch("/requests/:id", auth, async (req, res) => {
-	// const user = await User.findOne({ _id: req.user_id })
-	try{
-		await bookRequest.findOneAndUpdate({ _id: req.params.id }, req.body)
-		res.status(204).send( { message: "Successfully amended book request"})
-	} catch (e) {
-		console.log(e);
-		res.status(500)
-		res.send({error: e})
-	}
-})
+router.patch("/requests/:id", auth, updateRequest);
 
 // Delete a book request
-router.delete("/requests/:id", auth, async (req, res) => {
-	try {
-		await bookRequest.deleteOne({ _id: req.params.id })
-		res.status(204).send( { message: "Successfully Deleted Book Request"})
-	} catch {
-		res.status(404)
-		res.send({ error: "Book request doesn't exist!" })
-	}
-})
+router.delete("/requests/:id", auth, deleteRequest);
 
 module.exports = router
