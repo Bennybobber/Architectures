@@ -10,6 +10,10 @@ const jwt_decode = require('jwt-decode');
 
 const {
 	getUsers,
+	createUser,
+	getSpecificUser,
+	deleteUser,
+	modifyUser,
 } = require('./controllers/users');
 router.get("/salad/:id", async (req, res) => {
   res.status(200).send("Welcome 🙌 ");
@@ -108,84 +112,16 @@ router.post('/login', async (req, res) => {
 router.get("/users", auth, empCheck, getUsers);
 
 // Add a new user only employees or Authorizers can access
-router.post("/users", auth, empCheck, async (req, res) => {
-	try{
-		const oldUser = await User.findOne({ username: req.body.username });
-    	if (oldUser) {
-			// username already exists, so return error
-      		return res.status(409).send("User Already Exists. Please Login");
-    	}
-		const user = new User({
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			password: req.body.password,
-			username: req.body.username,
-			isEmployee: req.body.isEmployee,
-			isAuthorizer: req.body.isAuthorizer,
-		})
-		await user.save();
-		res.status(201);
-		res.send({message:"User Successfully Created"});
-	} catch (error) {
-		res.status(500);
-		console.log(error);
-		res.send({error: error});
-	}
-});
+router.post("/users", auth, empCheck, createUser);
 
 // Get individual user only employees or Authorizers can access
-router.get("/users/:id", auth, empCheck, async (req, res) => {
-    try {
-		const user = await User.findOne({ _id: req.params.id }).select("-password");
-		res.send(user)
-	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
-	}
-});
+router.get("/users/:id", auth, empCheck, getSpecificUser);
 
 // Update a user only employees or Authorizers can access
-router.patch("/users/:id", auth, empCheck, async (req, res) => {
-	try {
-		const user = await User.findOne({ _id: req.params.id })
-
-		if (req.body.name) {
-			user.name = req.body.name
-		}
-
-		if (req.body.ownedBooks) {
-			user.ownedBooks = req.body.ownedBooks
-		}
-
-        if (req.body.requests) {
-			user.requests = req.body.requests
-		}
-
-        if (req.body.isEmployee) {
-			user.isEmployee = req.body.isEmployee
-		}
-		if (req.body.isAuthorizer) {
-			user.isAuthorizer = req.body.isAuthorizer
-		}
-
-		await user.save()
-		res.send(user)
-	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
-	}
-})
+router.patch("/users/:id", auth, empCheck, modifyUser);
 
 // Delete a user
-router.delete("/users/:id", auth, empCheck, async (req, res) => {
-	try {
-		await User.deleteOne({ _id: req.params.id })
-		res.status(204).send()
-	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
-	}
-})
+router.delete("/users/:id", auth, empCheck, deleteUser);
 
 // Get all requests
 router.get("/requests", auth, empCheck, async (req, res) => {
