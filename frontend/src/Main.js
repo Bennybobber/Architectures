@@ -6,23 +6,33 @@ import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
 import "./styles/app.css"
 import jwt_decode from "jwt-decode";
+import NavLink from "react-bootstrap/esm/NavLink";
+import { Link, useHistory  } from 'react-router-dom';
 
 
 
 function Main() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [isAuthorizer , setAuthorizor]= useState(false);
+  const history = useHistory();
   useEffect(() => {
     onLoad();
-  }, []);
+  }, [userHasAuthenticated]);
   
   async function onLoad() {
     try {
-      let user = JSON.parse(localStorage.getItem('user'));
-      console.log(user);
-      const exp = jwt_decode(user.token);
-      if (Date.now() >= exp * 1000){
+      const user = JSON.parse(localStorage.getItem('user'));
+      setAuthorizor(user.isAuthorizer);    
+      const date = new Date();
+      const token = jwt_decode(user.token);
+      console.log(token);
+      
+      if ((date.getTime()/1000) > token.exp ){
         userHasAuthenticated(false);
+        localStorage.removeItem('user');
+        history.push("/login");
       }else {
+        console.log("here");
         userHasAuthenticated(true);
       }
     }
@@ -40,9 +50,37 @@ function Main() {
       <Navbar collapseOnSelect bg="light" expand="md" className="mb-3">
         <LinkContainer to="/">
           <Navbar.Brand className="font-weight-bold text-muted">
-            Bookies
+            Home
           </Navbar.Brand>
         </LinkContainer>
+        <LinkContainer to ="/makeRequest">
+        <Nav.Link>Make Request</Nav.Link>
+        </LinkContainer>
+        <LinkContainer to="/requests">
+        {isAuthenticated ? (
+            <Nav.Link>Requests</Nav.Link>
+            ) : (
+              <>
+              </>
+            )}
+            
+        </LinkContainer>
+        <LinkContainer to="/admin/users">
+          {isAuthorizer ? (
+            <Nav.Link> Manage Users </Nav.Link>
+          ) : (
+            <>
+            </>
+          )}
+        </LinkContainer>
+        <LinkContainer to="/account/create">
+          {isAuthorizer ? (
+            <Nav.Link> Create Account </Nav.Link>
+          ) : (
+            <>
+            </>
+          )}
+          </LinkContainer>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <Nav activeKey={window.location.pathname}>
@@ -70,10 +108,13 @@ function Main() {
   function handleLogout() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
+    history.push("/");
   }
   function showRequests(){
     if (isAuthenticated) {
-      return <Navbar.Brand className="font-weight-bold text-muted"> Requests </Navbar.Brand>
+      <LinkContainer to="/requests">
+            <Nav.Link>Requests</Nav.Link>
+        </LinkContainer>
     }
   }
   
