@@ -10,7 +10,6 @@ export default function AssignedReport(props) {
     const history = useHistory();
     const [errMsg, setErrMsg] = useState("");
     const [succMsg, setSuccMsg] = useState("");
-
     function unassignRequest() {
         console.log(JSON.parse(localStorage.getItem('user'))._id);
         if (window.confirm("Are you sure you want to be assigned this request?")){ 
@@ -26,22 +25,20 @@ export default function AssignedReport(props) {
             const url = (`http://localhost:3001/api/requests/` + props.bookId);
             try{
                 axios.patch(url, data, config)
-                  .then(res => {
-                    console.log(res.data);
-                    if (res.status === 200){
-                        setSuccMsg("Successfully Assigned Ticket");
-                        window.location.reload(false);
-    
-                    }
-                    else{
-                      setErrMsg(res.data);
-                    }
+                .then(res => {
+                    setSuccMsg("Request has been unassigned");
+                    window.location.reload(false);
                   })
-                } catch (err) {
+                .catch (err => {
                   alert(err.message);
                   setErrMsg(err.data);
-                }
+                })
+            }
+            catch (error){
+                console.log()
+            }
     }
+}
     function askForDetails() {
         if (window.confirm("Are you sure you want to ask for more details from the user?")){
             const data = {
@@ -56,21 +53,18 @@ export default function AssignedReport(props) {
             const url = (`http://localhost:3001/api/requests/` + props.bookId);
             try{
                 axios.patch(url, data, config)
-                  .then(res => {
-                    console.log(res.data);
-                    if (res.status === 200){
-                        setSuccMsg("Successfully Assigned Ticket");
-                        window.location.reload(false);
-    
-                    }
-                    else{
-                      setErrMsg(res.data);
-                    }
+                .then(res => {
+                    setSuccMsg("Details requested");
+                    window.location.reload(false);
                   })
-                } catch (err) {
+                .catch (err => {
                   alert(err.message);
                   setErrMsg(err.data);
-                }
+                })
+            }
+            catch (error){
+                console.log()
+            }
         }
     }
     function askApproval() {
@@ -104,7 +98,7 @@ export default function AssignedReport(props) {
                 }
         }
     }
-    }
+    
         return(
         <div className ="request">
             <h1> Book Request for {props.bookName} </h1>
@@ -132,15 +126,28 @@ export default function AssignedReport(props) {
                             </tbody>
                         </Table>
                         <div className = "buttonBox">
-                            <Button variant="success" onClick={ () => unassignRequest()}>
+                            <Button variant="success" className="buttons" onClick={ () => unassignRequest()}>
                                 Unassign Book
                             </Button>
-                            <Button variant="success" onClick={ () => unassignRequest()}>
+                            {props.isAdmin ? ( <></>
+
+                            ) : (
+                                <Button variant="success" className="buttons" onClick={ () => askApproval()}>
+                                    Request Approval
+                                </Button>
+                            )}
+                            
+                            {!props.needsMoreDetail ? ( <Button variant="success" className="buttons" onClick={ () => askForDetails()}>
                                 Request More Details
-                            </Button>
-                            <Button variant="success" onClick={ () => unassignRequest()}>
-                                Request Approval
-                            </Button>
+                            </Button> ) : (
+                                
+                                <>
+                                <div className="waiting">
+                                    <h4> Awaiting Details </h4>
+                                </div>
+                                </>
+                            )}
+                            
                         </div>
                     </div>
             </div>

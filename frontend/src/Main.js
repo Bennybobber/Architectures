@@ -25,6 +25,7 @@ function Main() {
       setAuthorizor(user.isAuthorizer);    
       const date = new Date();
       const token = jwt_decode(user.token);
+      console.log(token);
       
       if ((date.getTime()/1000) > token.exp ){
         userHasAuthenticated(false);

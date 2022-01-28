@@ -6,4 +6,17 @@
 .buttonBox{
     padding-top: 5%;
     margin-right: 5%;
+    margin: auto;
+}
+
+.buttons {
+    margin: 1%;
+}
+
+.waiting {
+    display: block;
+    background-color: red;
+    padding: 1.5rem;
+    margin: auto;
+    width: 75%;
 }

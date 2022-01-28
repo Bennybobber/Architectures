@@ -38,7 +38,35 @@ export default function Report(props) {
             catch (err) {
                 alert(err.message);
             }
+        }
     }
+    const  moveBackToReview = () => {
+        if (window.confirm("Are you sure you want to move this back onto the queue for review?")){ 
+            const data = {
+                needsMoreDetail: false,
+            }
+            const config = {
+                headers: {
+                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                }
+                
+            }
+            const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            try{
+                axios.patch(url, data, config)
+                .then(res => {
+                    setSuccMsg("Moved back to queue");
+                    window.location.reload(false);
+                  })
+                .catch (err => {
+                  alert(err.message);
+                  setErrMsg(err.data);
+                })
+            }
+            catch (error){
+                console.log()
+            }
+        }
     }
     function handleSubmit(event) {
         event.preventDefault();
@@ -77,6 +105,7 @@ export default function Report(props) {
             }
           
     }
+    
         return(
         <div className ="request">
             <h1> Book Request for {props.bookName} </h1>
@@ -166,12 +195,20 @@ export default function Report(props) {
                             </tbody>
                         </Table>
                         <div className = "buttonBox">
-                            <Button variant="success" onClick={ () => setIsEdit(true)}>
+                            <Button variant="success" className="buttons"  onClick={ () => setIsEdit(true)}>
                                 Edit Book Request
                             </Button>
-                            <Button variant="danger" onClick={ () => cancelRequest()}>
+                            <Button variant="danger" className="buttons"  onClick={ () => cancelRequest()}>
                                 Delete Book Request
                             </Button>
+                            {props.needsMoreDetail ? (
+                                <Button variant="info" className="buttons" onClick={ () => moveBackToReview()}>
+                                    Notify Edits Have Been Made
+                                </Button>
+                            ) : (
+                                <>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}

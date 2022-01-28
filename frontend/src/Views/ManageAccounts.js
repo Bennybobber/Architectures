@@ -90,7 +90,7 @@ export default function ManageAccounts() {
             </div>
 
             <div>
-                <h2>Mange Employees </h2>
+                <h1>Mange Employees </h1>
                 {employeeUsers}
             </div>
         </div>

@@ -1,5 +1,4 @@
 const express = require("express");
-const Book = require("./models/Book");
 const User = require('./models/User');
 const bookRequest = require('./models/Request');
 const router = express.Router();
@@ -9,6 +8,9 @@ const auth = require("./authentication/auth");
 const empCheck = require('./authentication/employeeCheck');
 const jwt_decode = require('jwt-decode');
 
+const {
+	getUsers,
+} = require('./controllers/users');
 router.get("/salad/:id", async (req, res) => {
   res.status(200).send("Welcome 🙌 ");
 });
@@ -102,85 +104,8 @@ router.post('/login', async (req, res) => {
 	  
 });
 
-// Get all books anybody can access this route
-router.get("/books", async (req, res) => {
-	const books = await Book.find();
-	res.send(books);
-});
-// Add a new book only employees or Authorizers can access
-router.post("/books", auth, empCheck, async (req, res) => {
-	const book = new Book({
-		title: req.body.title,
-		desc: req.body.content,
-        releaseYear: req.body.releaseYear,
-        price: req.body.price,
-	})
-	await book.save()
-	res.send(book)
-});
-// Gets a specific book, anybody can access this
-router.get("/books/:id", async (req, res) => {
-    try {
-		const book = await Book.findOne({ _id: req.params.id })
-		res.send(book)
-	} catch {
-		res.status(404)
-		res.send({ error: "Book doesn't exist!" })
-	}
-});
-
-// Update a book only employees or Authorizers can access
-router.patch("/books/:id", auth, empCheck, async (req, res) => {
-	try {
-		const book = await Book.findOne({ _id: req.params.id })
-
-		if (req.body.title) {
-			book.title = req.body.title
-		}
-
-		if (req.body.desc) {
-			book.desc = req.body.desc
-		}
-
-        if (req.body.releaseYear) {
-			book.releaseYear = req.body.releaseYear
-		}
-
-        if (req.body.price) {
-			book.price = req.body.price
-		}
-
-		await book.save()
-		res.send(book)
-	} catch {
-		res.status(404)
-		res.send({ error: "Book doesn't exist!" })
-	}
-})
-
-// Delete a book only employees or Authorizers can access
-router.delete("/books/:id", auth, empCheck, async (req, res) => {
-	try {
-		await Book.deleteOne({ _id: req.params.id })
-		res.status(204).send()
-	} catch {
-		res.status(404)
-		res.send({ error: "Book doesn't exist!" })
-	}
-})
-
 // Get all users only employees or Authorizers can access
-router.get("/users", auth, empCheck, async (req, res) => {
-	try{
-		const users = await User.find().select("-password");;
-		res.send(users);
-	} catch {
-		res.status(500);
-		res.send({ error: 'Server Error Occured'});
-	}
-	
-	
-});
+router.get("/users", auth, empCheck, getUsers);
 
 // Add a new user only employees or Authorizers can access
 router.post("/users", auth, empCheck, async (req, res) => {
@@ -315,9 +240,12 @@ router.get("/user/requests/:id", auth, async (req, res) => {
 
 // Update a request
 router.patch("/requests/:id", auth, async (req, res) => {
+	// const user = await User.findOne({ _id: req.user_id })
 	try{
 		await bookRequest.findOneAndUpdate({ _id: req.params.id }, req.body)
+		res.status(204).send( { message: "Successfully amended book request"})
 	} catch (e) {
+		console.log(e);
 		res.status(500)
 		res.send({error: e})
 	}

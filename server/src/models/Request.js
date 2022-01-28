@@ -10,7 +10,7 @@ const schema = mongoose.Schema({
     userId: {type: String, required: true},
     isApproved: {type: Boolean, required: true, default: false},
     assignedTo: {type: String, required: false, default: ""},
-    needsMoreDtail: {type: Boolean, required: false, default: false},
+    needsMoreDetail: {type: Boolean, required: false, default: false},
     needsAuthorizer: {type: Boolean, required: false, default: false},
     isProcessed: {type: Boolean, required: false, default: false},
 })

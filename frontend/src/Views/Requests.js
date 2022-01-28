@@ -13,6 +13,7 @@ export default function Requests() {
   const [BookRequests, setBookRequests] = useState([]);
   const [availableBookRequests, setAvailableBookRequests] = useState([]);
   const [assignedToEmp, setAssignedToEmp] = useState([]);
+  const [needsWorkRequests, setWorkRequests] = useState([]);
 
 
    useEffect(() => {
@@ -52,8 +53,19 @@ export default function Requests() {
       }
     })
     const bookRequests = await request.data;
-    
+    let needsWork = [];
+    let inQueueRequests = [];
     setBookRequests(bookRequests);
+
+    for (let request = 0; request < bookRequests.length; request++) {
+      if (bookRequests[request].needsMoreDetail) {
+        needsWork.push(bookRequests[request]);
+      } else {
+        inQueueRequests.push(bookRequests[request]);
+      }
+    }
+    setBookRequests(inQueueRequests);
+    setWorkRequests(needsWork);
   }
 
   async function getAllUserRequests() {
@@ -73,7 +85,7 @@ export default function Requests() {
       if (bookRequests[book].assignedTo == user._id ) {
         assignedToBookRequests.push(bookRequests[book])
       }
-      else if (bookRequests[book].assignedTo == "") {
+      else if (bookRequests[book].assignedTo == "" && !bookRequests.needsMoreDetail) {
         availableRequests.push(bookRequests[book])
       }
     }
@@ -89,13 +101,33 @@ export default function Requests() {
         bookPrice =  {request.bookPrice}
         bookGenre =  {request.bookGenre}
         bookId = {request._id}
+        assignedTo = {request.assignedTo}
+        needsMoreDetail = {request.needsMoreDetail}
+        isAdmin = {isAuthorizer}
         />
     ));
+    const requiresWorkRequests = needsWorkRequests?.map((request, i) => (
+      <Report key={request._id}
+        bookName = {request.bookName}
+        bookAuthor = {request.bookAuthor} 
+        bookDesc = {request.bookDesc}
+        bookPrice =  {request.bookPrice}
+        bookGenre =  {request.bookGenre}
+        bookId = {request._id}
+        assignedTo = {request.assignedTo}
+        needsMoreDetail = {request.needsMoreDetail}
+        isAdmin = {isAuthorizer}
+        />
+    )); 
         return (
             <div className = "content">
                 <div className = 'showRequests'>
                     <h1>Your Requests</h1>
                     {bookRequests}
+                </div>
+                <div className = 'showRequests'>
+                  <h1> Requires Work </h1>
+                  {requiresWorkRequests}
                 </div>
             </div>
         )
@@ -109,6 +141,9 @@ export default function Requests() {
         bookPrice =  {request.bookPrice}
         bookGenre =  {request.bookGenre}
         bookId = {request._id}
+        assignedTo = {request.assignedTo}
+        needsMoreDetail = {request.needsMoreDetail}
+        isAdmin = {isAuthorizer}
         />
     ));
     const yourRequests = assignedToEmp?.map((request, i) => (
@@ -119,6 +154,9 @@ export default function Requests() {
         bookPrice =  {request.bookPrice}
         bookGenre =  {request.bookGenre}
         bookId = {request._id}
+        assignedTo = {request.assignedTo}
+        needsMoreDetail = {request.needsMoreDetail}
+        isAdmin = {isAuthorizer}
         />
     ));
     return(
