@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, { useState, useEffect  } from "react";
 import { AppContext } from "./lib/contextLib";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -6,39 +6,41 @@ import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
 import "./styles/app.css"
 import jwt_decode from "jwt-decode";
-import NavLink from "react-bootstrap/esm/NavLink";
-import { Link, useHistory  } from 'react-router-dom';
+import { useHistory  } from 'react-router-dom';
 
 
 
 function Main() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isAuthorizer , setAuthorizor]= useState(false);
+  const [isEmployee, setEmployee] = useState(false);
   const history = useHistory();
   useEffect(() => {
     onLoad();
-  }, [userHasAuthenticated]);
-  
-  async function onLoad() {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      setAuthorizor(user.isAuthorizer);    
-      const date = new Date();
-      const token = jwt_decode(user.token);
-      console.log(token);
-      
-      if ((date.getTime()/1000) > token.exp ){
-        userHasAuthenticated(false);
-        localStorage.removeItem('user');
-        history.push("/login");
-      }else {
-        console.log("here");
-        userHasAuthenticated(true);
+    async function onLoad() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setAuthorizor(user.isAuthorizer);
+        setEmployee(user.isEmployee);    
+        const date = new Date();
+        const token = jwt_decode(user.token);
+        console.log(token);
+        
+        if ((date.getTime()/1000) > token.exp ){
+          userHasAuthenticated(false);
+          localStorage.removeItem('user');
+          history.push("/login");
+        }else {
+          console.log("here");
+          userHasAuthenticated(true);
+        }
+      }
+      catch(e) {
       }
     }
-    catch(e) {
-    }
-  }
+  }, [userHasAuthenticated, history, setAuthorizor, setEmployee]);
+  
+  
   
   try{
     
@@ -54,7 +56,12 @@ function Main() {
           </Navbar.Brand>
         </LinkContainer>
         <LinkContainer to ="/makeRequest">
-        <Nav.Link>Make Request</Nav.Link>
+          {!isEmployee && !isAuthorizer && isAuthenticated ? (
+            <Nav.Link>Make Request</Nav.Link>
+          ) : (
+            <>
+            </>
+          )}
         </LinkContainer>
         <LinkContainer to="/requests">
         {isAuthenticated ? (
@@ -108,14 +115,9 @@ function Main() {
   function handleLogout() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
+    setAuthorizor(false);
+    setEmployee(false);
     history.push("/");
-  }
-  function showRequests(){
-    if (isAuthenticated) {
-      <LinkContainer to="/requests">
-            <Nav.Link>Requests</Nav.Link>
-        </LinkContainer>
-    }
   }
   
 }
