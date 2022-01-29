@@ -3,7 +3,6 @@ import jwt_decode from "jwt-decode";
 import "../styles/Requests.css"
 import axios from "axios";
 import Report from "../components/Report.js"
-import AdminReport from "../components/adminReport.js"
 import AssignedReport from "../components/assignedReport.js"
 
 export default function Requests() {
@@ -134,7 +133,7 @@ export default function Requests() {
   }
   else{
     const availableRequests = availableBookRequests?.map((request, i) => (
-      <AdminReport key={request._id}
+      <AssignedReport key={request._id}
         bookName = {request.bookName}
         bookAuthor = {request.bookAuthor} 
         bookDesc = {request.bookDesc}
@@ -144,6 +143,7 @@ export default function Requests() {
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
         isAdmin = {isAuthorizer}
+        isEmployee = {isEmployee}
         />
     ));
     const yourRequests = assignedToEmp?.map((request, i) => (
@@ -157,6 +157,7 @@ export default function Requests() {
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
         isAdmin = {isAuthorizer}
+        isEmployee = {isEmployee}
         />
     ));
     return(

@@ -132,14 +132,8 @@ export default function MakeRequest() {
               } 
             )
               .then(res => {
-                console.log(res.data);
-                if (res.status === 200){
-                    setSuccMsg("Successfully Created Ticket");
+                setSuccMsg("Successfully Created Ticket");
 
-                }
-                else{
-                  setErrMsg(res.data);
-                }
               })
             } catch (err) {
               alert(err.message);

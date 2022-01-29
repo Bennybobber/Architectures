@@ -195,12 +195,19 @@ export default function Report(props) {
                             </tbody>
                         </Table>
                         <div className = "buttonBox">
-                            <Button variant="success" className="buttons"  onClick={ () => setIsEdit(true)}>
-                                Edit Book Request
-                            </Button>
-                            <Button variant="danger" className="buttons"  onClick={ () => cancelRequest()}>
-                                Delete Book Request
-                            </Button>
+                            
+                            {(props.assignedTo && !props.needsMoreDetail) ? (
+                                <h1> Request is being processed... </h1>
+                            ) : (
+                                <div>
+                                <Button variant="success" className="buttons"  onClick={ () => setIsEdit(true)}>
+                                    Edit Book Request
+                                </Button>
+                                <Button variant="danger" className="buttons"  onClick={ () => cancelRequest()}>
+                                Cancel Request
+                                </Button>
+                                </div>
+                            )}
                             {props.needsMoreDetail ? (
                                 <Button variant="info" className="buttons" onClick={ () => moveBackToReview()}>
                                     Notify Edits Have Been Made
