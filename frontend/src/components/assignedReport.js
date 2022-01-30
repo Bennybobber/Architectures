@@ -1,13 +1,11 @@
-import React, {useState, useEffect  } from "react";
+import React, {useState} from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import "../styles/Report.css";
-import {useHistory} from "react-router-dom";
 import axios from 'axios';
 
 
 export default function AssignedReport(props) {
-    const history = useHistory();
     const [errMsg, setErrMsg] = useState("");
     const [succMsg, setSuccMsg] = useState("");
     function unassignRequest() {
@@ -165,7 +163,7 @@ export default function AssignedReport(props) {
                                 </Button>
                             )}
                             
-                            {(!props.needsMoreDetail && props.assignedTo != "" ) ? ( 
+                            {(!props.needsMoreDetail && props.assignedTo !== "" ) ? ( 
                                 <Button variant="success" className="buttons" onClick={ () => askForDetails()}>
                                     Request More Details
                                 </Button>
@@ -181,7 +179,7 @@ export default function AssignedReport(props) {
                                     </>
                                 )   
                             )}
-                            {props.assignedTo == "" ? (
+                            {props.assignedTo === "" ? (
                                 <Button variant="success" onClick={ () => assignRequest()}>
                                     Assign Book Request
                                 </Button>
@@ -236,7 +234,7 @@ export default function AssignedReport(props) {
                                 </Button>
                             )}
                             
-                            {(!props.needsMoreDetail && props.assignedTo != "" ) ? ( 
+                            {(!props.needsMoreDetail && props.assignedTo !== "" ) ? ( 
                                 <Button variant="success" className="buttons" onClick={ () => askForDetails()}>
                                     Request More Details
                                 </Button>
@@ -252,7 +250,7 @@ export default function AssignedReport(props) {
                                     </>
                                 )   
                             )}
-                            {props.assignedTo == "" ? (
+                            {props.assignedTo === "" ? (
                                 <Button variant="success" onClick={ () => assignRequest()}>
                                     Assign Book Request
                                 </Button>

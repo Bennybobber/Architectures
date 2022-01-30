@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, { useState, useEffect  } from "react";
 import jwt_decode from "jwt-decode";
 import "../styles/Requests.css"
 import axios from "axios";
@@ -81,10 +81,10 @@ export default function Requests() {
     let assignedToBookRequests = [];
     let availableRequests = [];
     for (let book = 0; book < bookRequests.length; book++) {
-      if (bookRequests[book].assignedTo == user._id ) {
+      if (bookRequests[book].assignedTo === user._id ) {
         assignedToBookRequests.push(bookRequests[book])
       }
-      else if (bookRequests[book].assignedTo == "" && !bookRequests.needsMoreDetail) {
+      else if (bookRequests[book].assignedTo === "" && !bookRequests.needsMoreDetail) {
         availableRequests.push(bookRequests[book])
       }
     }

@@ -1,17 +1,14 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "../styles/Report.css";
-import {useHistory} from "react-router-dom";
 import axios from 'axios';
 
 
 
 export default function Report(props) {
     const [isEdit, setIsEdit] = useState(false);
-    const [editId, setEditId] = useState("");
-    const history = useHistory();
     const [errMsg, setErrMsg] = useState("");
     const [succMsg, setSuccMsg] = useState("");
     const [bookName, setBookName] = useState(props.bookName);
@@ -180,7 +177,7 @@ export default function Report(props) {
                                     <th>Book Name</th>
                                     <th>Book Author</th>
                                     <th>Book Desc</th>
-                                    <th>Book Price</th>
+                                    <th>Book Price (£)</th>
                                     <th>Book Genre</th>
                                 </tr>
                             </thead>
@@ -196,7 +193,7 @@ export default function Report(props) {
                         </Table>
                         <div className = "buttonBox">
                             
-                            {(props.assignedTo && !props.needsMoreDetail) ? (
+                            {(props.assignedTo === "" && !props.needsMoreDetail) ? (
                                 <h1> Request is being processed... </h1>
                             ) : (
                                 <div>

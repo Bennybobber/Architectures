@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, {useState, useEffect  } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import User from "../components/User.js"
@@ -7,7 +7,6 @@ import User from "../components/User.js"
 export default function ManageAccounts() {
     const [isAuthenticated, userHasAuthenticated] = useState(false);
     const [isAuthorizer , setAuthorizor]= useState(false);
-    const [allUsers, setAllUsers] = useState([]);
     const [clientUsers, setClientUsers] = useState([]);
     const [empUsers, setEmpUsers] = useState([]);
 
@@ -43,10 +42,9 @@ export default function ManageAccounts() {
                 'x-access-token': user.token
             }
         })
-        const users =  await request.data
-        setAllUsers(users)
-        let employees = []
-        let customers = []
+        const users =  await request.data;
+        let employees = [];
+        let customers = [];
         for (let user = 0; user < users.length; user++ ) {
             if (users[user].isEmployee ) {
                 if (!users[user].isAuthorizer){

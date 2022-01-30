@@ -3,11 +3,10 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
+import "../styles/makeRequest.css"
 
 export default function MakeRequest() {
     const [isAuthenticated, userHasAuthenticated] = useState(false);
-    const [isEmployee, setEmployee] = useState("");
-    const [isAuthorizer , setAuthorizor]= useState("");
     const [errMsg, setErrMsg] = useState("");
     const [succMsg, setSuccMsg] = useState("");
 
@@ -30,8 +29,6 @@ export default function MakeRequest() {
             }else {
                 userHasAuthenticated(true);
             }
-            setEmployee(user.isEmployee);
-            setAuthorizor(user.isAuthorizer);
             }
         catch(e) {
         }
@@ -133,6 +130,11 @@ export default function MakeRequest() {
             )
               .then(res => {
                 setSuccMsg("Successfully Created Ticket");
+                setBookName("");
+                setBookAuthor("");
+                setBookDesc("");
+                setBookGenre("");
+                setBookPrice("");
 
               })
             } catch (err) {
