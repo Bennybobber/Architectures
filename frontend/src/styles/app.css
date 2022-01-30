@@ -1,0 +1,10 @@
+.login {
+    display: flex;
+}
+
+.username {
+    text-align: left;
+    font-weight: bold;
+    margin: auto;
+    margin-right: 1.5rem;
+}
