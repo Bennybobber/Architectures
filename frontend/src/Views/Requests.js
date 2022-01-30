@@ -13,6 +13,7 @@ export default function Requests() {
   const [availableBookRequests, setAvailableBookRequests] = useState([]);
   const [assignedToEmp, setAssignedToEmp] = useState([]);
   const [needsWorkRequests, setWorkRequests] = useState([]);
+  const [needsApprovalRequests, setNeedsApprovalRequests] = useState([]);
 
 
    useEffect(() => {
@@ -34,8 +35,8 @@ export default function Requests() {
       }else {
         userHasAuthenticated(true);
       }
-      setEmployee(user.isEmployee);
-      setAuthorizor(user.isAuthorizer);
+      await setEmployee(user.isEmployee);
+      await setAuthorizor(user.isAuthorizer);
     }
     catch(e) {
       console.log(e);
@@ -54,7 +55,7 @@ export default function Requests() {
     const bookRequests = await request.data;
     let needsWork = [];
     let inQueueRequests = [];
-    setBookRequests(bookRequests);
+    await setBookRequests(bookRequests);
 
     for (let request = 0; request < bookRequests.length; request++) {
       if (bookRequests[request].needsMoreDetail) {
@@ -63,8 +64,8 @@ export default function Requests() {
         inQueueRequests.push(bookRequests[request]);
       }
     }
-    setBookRequests(inQueueRequests);
-    setWorkRequests(needsWork);
+    await setBookRequests(inQueueRequests);
+    await setWorkRequests(needsWork);
   }
 
   async function getAllUserRequests() {
@@ -80,6 +81,7 @@ export default function Requests() {
     // Sort out the requests the employee have assigned.
     let assignedToBookRequests = [];
     let availableRequests = [];
+    let needsApproval = [];
     for (let book = 0; book < bookRequests.length; book++) {
       if (bookRequests[book].assignedTo == user._id ) {
         assignedToBookRequests.push(bookRequests[book])
@@ -87,9 +89,13 @@ export default function Requests() {
       else if (bookRequests[book].assignedTo == "" && !bookRequests.needsMoreDetail) {
         availableRequests.push(bookRequests[book])
       }
+      if(bookRequests[book].needsAuthorizer) {
+        needsApproval.push(bookRequests[request]);
+      }
     }
-    setAvailableBookRequests(availableRequests);
-    setAssignedToEmp(assignedToBookRequests);
+    await setNeedsApprovalRequests(needsApproval);
+    await setAvailableBookRequests(availableRequests);
+    await setAssignedToEmp(assignedToBookRequests);
   }
   if (isAuthenticated && !isEmployee && !isAuthorizer) {
     const bookRequests = BookRequests?.map((request, i) => (
@@ -131,7 +137,7 @@ export default function Requests() {
             </div>
         )
   }
-  else{
+  else if (isEmployee && isAuthenticated) {
     const availableRequests = availableBookRequests?.map((request, i) => (
       <AssignedReport key={request._id}
         bookName = {request.bookName}
@@ -171,6 +177,43 @@ export default function Requests() {
         {availableRequests}
       </div>
     </div>
+    )
+
+  }
+  else if (isAuthorizer && isAuthenticated) {
+    console.log(needsApprovalRequests);
+    if ( needsApprovalRequests.length > 1 ){
+      
+      const adminRequests = needsApprovalRequests?.map((request, i) => (
+        <AssignedReport key={request._id}
+          bookName = {request.bookName}
+          bookAuthor = {request.bookAuthor} 
+          bookDesc = {request.bookDesc}
+          bookPrice =  {request.bookPrice}
+          bookGenre =  {request.bookGenre}
+          bookId = {request._id}
+          assignedTo = {request.assignedTo}
+          needsMoreDetail = {request.needsMoreDetail}
+          isAdmin = {isAuthorizer}
+          isEmployee = {isEmployee}
+          />
+    ));
+    return (
+      <div className="content">
+        <h1> You're an admin </h1>
+        {adminRequests}
+      </div>
+    )
+    }
+    else {
+      return (
+        <h1> Arse </h1>
+      )
+    }
+  }
+  else {
+    return (
+      <h1> Please login to view this page </h1>
     )
   }
 }

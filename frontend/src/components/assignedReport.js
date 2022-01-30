@@ -191,6 +191,19 @@ export default function AssignedReport(props) {
                                 Unassign Book
                                 </Button>
                             )}
+                            {props.isAdmin ? (
+                                <div>
+                                <Button variant="info" className="buttons" >
+                                    Approve Ticket
+                                </Button>
+                                <Button variant="info" className="buttons" >
+                                    Disapprove Ticket
+                                </Button>
+                                </div>
+                            ) : (
+                                <>
+                                </>
+                            )}
                             
                         </div>
                     </div>
