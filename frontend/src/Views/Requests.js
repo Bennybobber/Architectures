@@ -1,9 +1,8 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, { useState, useEffect  } from "react";
 import jwt_decode from "jwt-decode";
 import "../styles/Requests.css"
 import axios from "axios";
 import Report from "../components/Report.js"
-import AdminReport from "../components/adminReport.js"
 import AssignedReport from "../components/assignedReport.js"
 
 export default function Requests() {
@@ -14,6 +13,7 @@ export default function Requests() {
   const [availableBookRequests, setAvailableBookRequests] = useState([]);
   const [assignedToEmp, setAssignedToEmp] = useState([]);
   const [needsWorkRequests, setWorkRequests] = useState([]);
+  const [needsApprovalRequests, setNeedsApprovalRequests] = useState([]);
 
 
    useEffect(() => {
@@ -35,8 +35,8 @@ export default function Requests() {
       }else {
         userHasAuthenticated(true);
       }
-      setEmployee(user.isEmployee);
-      setAuthorizor(user.isAuthorizer);
+      await setEmployee(user.isEmployee);
+      await setAuthorizor(user.isAuthorizer);
     }
     catch(e) {
       console.log(e);
@@ -55,17 +55,19 @@ export default function Requests() {
     const bookRequests = await request.data;
     let needsWork = [];
     let inQueueRequests = [];
-    setBookRequests(bookRequests);
+    await setBookRequests(bookRequests);
 
     for (let request = 0; request < bookRequests.length; request++) {
-      if (bookRequests[request].needsMoreDetail) {
-        needsWork.push(bookRequests[request]);
-      } else {
-        inQueueRequests.push(bookRequests[request]);
+      if (bookRequests[request].isProcessed === false){
+        if (bookRequests[request].needsMoreDetail) {
+          needsWork.push(bookRequests[request]);
+        } else {
+          inQueueRequests.push(bookRequests[request]);
+        }
       }
     }
-    setBookRequests(inQueueRequests);
-    setWorkRequests(needsWork);
+    await setBookRequests(inQueueRequests);
+    await setWorkRequests(needsWork);
   }
 
   async function getAllUserRequests() {
@@ -81,16 +83,23 @@ export default function Requests() {
     // Sort out the requests the employee have assigned.
     let assignedToBookRequests = [];
     let availableRequests = [];
+    let needsApproval = [];
     for (let book = 0; book < bookRequests.length; book++) {
-      if (bookRequests[book].assignedTo == user._id ) {
-        assignedToBookRequests.push(bookRequests[book])
-      }
-      else if (bookRequests[book].assignedTo == "" && !bookRequests.needsMoreDetail) {
-        availableRequests.push(bookRequests[book])
+      if (bookRequests[book].isProcessed === false){
+        if (bookRequests[book].assignedTo === user._id ) {
+          assignedToBookRequests.push(bookRequests[book])
+        }
+        else if (bookRequests[book].assignedTo === "" && !bookRequests.needsMoreDetail) {
+          availableRequests.push(bookRequests[book])
+        }
+        if(bookRequests[book].needsAuthorizer) {
+          needsApproval.push(bookRequests[book]);
+        }
       }
     }
-    setAvailableBookRequests(availableRequests);
-    setAssignedToEmp(assignedToBookRequests);
+    await setNeedsApprovalRequests(needsApproval);
+    await  setAvailableBookRequests(availableRequests);
+    await setAssignedToEmp(assignedToBookRequests);
   }
   if (isAuthenticated && !isEmployee && !isAuthorizer) {
     const bookRequests = BookRequests?.map((request, i) => (
@@ -103,7 +112,9 @@ export default function Requests() {
         bookId = {request._id}
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
+        needsApproval = {request.needsAuthorizer}
         isAdmin = {isAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     ));
     const requiresWorkRequests = needsWorkRequests?.map((request, i) => (
@@ -116,7 +127,9 @@ export default function Requests() {
         bookId = {request._id}
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
+        needsApproval = {request.needsAuthorizer}
         isAdmin = {isAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     )); 
         return (
@@ -132,9 +145,9 @@ export default function Requests() {
             </div>
         )
   }
-  else{
+  else if (isEmployee && isAuthenticated) {
     const availableRequests = availableBookRequests?.map((request, i) => (
-      <AdminReport key={request._id}
+      <AssignedReport key={request._id}
         bookName = {request.bookName}
         bookAuthor = {request.bookAuthor} 
         bookDesc = {request.bookDesc}
@@ -144,6 +157,9 @@ export default function Requests() {
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
         isAdmin = {isAuthorizer}
+        isEmployee = {isEmployee}
+        needsApproval = {request.needsAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     ));
     const yourRequests = assignedToEmp?.map((request, i) => (
@@ -157,6 +173,9 @@ export default function Requests() {
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
         isAdmin = {isAuthorizer}
+        isEmployee = {isEmployee}
+        needsApproval = {request.needsAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     ));
     return(
@@ -170,6 +189,43 @@ export default function Requests() {
         {availableRequests}
       </div>
     </div>
+    )
+
+  }
+  else if (isAuthorizer && isAuthenticated) {
+    if ( needsApprovalRequests.length > 0 ){
+      const adminRequests = needsApprovalRequests?.map((request, i) => (
+        <AssignedReport key={request._id}
+          bookName = {request.bookName}
+          bookAuthor = {request.bookAuthor} 
+          bookDesc = {request.bookDesc}
+          bookPrice =  {request.bookPrice}
+          bookGenre =  {request.bookGenre}
+          bookId = {request._id}
+          assignedTo = {request.assignedTo}
+          needsMoreDetail = {request.needsMoreDetail}
+          isAdmin = {isAuthorizer}
+          isEmployee = {isEmployee}
+          needsApproval = {request.needsAuthorizer}
+          approvalStatus = {request.approvalStatus}
+          />
+    ));
+    return (
+      <div className="content">
+        <h1> You're an admin </h1>
+        {adminRequests}
+      </div>
+    )
+    }
+    return (
+      <div className="content">
+        <h1> There are no requests to authorise at this moment in time.</h1>
+      </div>
+    )
+  }
+  else {
+    return (
+      <h1> Please login to view this page </h1>
     )
   }
 }

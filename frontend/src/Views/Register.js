@@ -14,17 +14,18 @@ export default function Register() {
   
   const [errMsg, setErrMsg] = useState("");
   
-  React.useEffect(() => {
+  useEffect(() => {
     onLoad();
-  }, []);
+    async function onLoad() {
+      try {
+        if (isAuthenticated) window.location = '/';
+      }
+      catch(e) {
+      }
+    }
+  }, [isAuthenticated]);
   
-  async function onLoad() {
-    try {
-      if (isAuthenticated) window.location = '/';
-    }
-    catch(e) {
-    }
-  }
+  
 
   function validateForm() {
     return username.length > 0 && password.length > 0;

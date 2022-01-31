@@ -1,0 +1,16 @@
+.success{
+    padding: 1.5rem;
+    margin: auto;
+    text-align: center;
+    background-color: green;
+    margin-top: 2%;
+
+}
+
+.error{
+    padding: 1.5rem;
+    margin: auto;
+    text-align: center;
+    background-color: red;
+    margin-top: 2%;
+}
