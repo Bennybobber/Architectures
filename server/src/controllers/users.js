@@ -59,29 +59,8 @@ const deleteUser = ( async (req, res) => {
 
 const modifyUser = ( async (req, res) => {
     try {
-		const user = await User.findOne({ _id: req.params.id })
-
-		if (req.body.name) {
-			user.name = req.body.name
-		}
-
-		if (req.body.ownedBooks) {
-			user.ownedBooks = req.body.ownedBooks
-		}
-
-        if (req.body.requests) {
-			user.requests = req.body.requests
-		}
-
-        if (req.body.isEmployee) {
-			user.isEmployee = req.body.isEmployee
-		}
-		if (req.body.isAuthorizer) {
-			user.isAuthorizer = req.body.isAuthorizer
-		}
-
-		await user.save()
-		res.send(user)
+		const user = await User.findOneAndUpdate({ _id: req.params.id }, req.body);
+		res.status(204).send(user)
 	} catch {
 		res.status(404)
 		res.send({ error: "User doesn't exist!" })

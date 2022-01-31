@@ -1,6 +1,5 @@
 import React from "react";
 import "../styles/home.css";
-import { useAppContext } from "../lib/contextLib";
 
 
 export default function Home() {

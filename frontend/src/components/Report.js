@@ -1,17 +1,14 @@
-import React, { Component, useState, useEffect  } from "react";
+import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "../styles/Report.css";
-import {useHistory} from "react-router-dom";
 import axios from 'axios';
 
 
 
 export default function Report(props) {
     const [isEdit, setIsEdit] = useState(false);
-    const [editId, setEditId] = useState("");
-    const history = useHistory();
     const [errMsg, setErrMsg] = useState("");
     const [succMsg, setSuccMsg] = useState("");
     const [bookName, setBookName] = useState(props.bookName);
@@ -120,6 +117,7 @@ export default function Report(props) {
                             autoFocus
                             type="bookName"
                             value = {bookName}
+                            maxLength="64"
                             onChange = {(e) => setBookName(e.target.value)}
                         />
                     </Form.Group>
@@ -129,6 +127,7 @@ export default function Report(props) {
                             autoFocus
                             type="bookAuthor"
                             value = {bookAuthor}
+                            maxLength="64"
                             onChange = {(e) => setBookAuthor(e.target.value)}
                         />
                     </Form.Group>
@@ -138,6 +137,7 @@ export default function Report(props) {
                             autoFocus
                             type="bookDesc"
                             value = {bookDesc}
+                            maxLength="256"
                             onChange = {(e) => setBookDesc(e.target.value)}
                         />
                     </Form.Group>
@@ -146,6 +146,7 @@ export default function Report(props) {
                         <Form.Control
                             autoFocus
                             type="bookPrice"
+                            maxLength= "32"
                             value = {bookPrice}
                             onChange = {(e) => setBookPrice(e.target.value)}
                         />
@@ -155,6 +156,7 @@ export default function Report(props) {
                         <Form.Control
                             autoFocus
                             type="bookGenre"
+                            maxLength="128"
                             value = {bookGenre}
                             onChange = {(e) => setBookGenre(e.target.value)}
                         />
@@ -180,7 +182,7 @@ export default function Report(props) {
                                     <th>Book Name</th>
                                     <th>Book Author</th>
                                     <th>Book Desc</th>
-                                    <th>Book Price</th>
+                                    <th>Book Price (£)</th>
                                     <th>Book Genre</th>
                                 </tr>
                             </thead>
@@ -196,7 +198,7 @@ export default function Report(props) {
                         </Table>
                         <div className = "buttonBox">
                             
-                            {(props.assignedTo && !props.needsMoreDetail) ? (
+                            {(props.assignedTo !== "" && !props.needsMoreDetail) ? (
                                 <h1> Request is being processed... </h1>
                             ) : (
                                 <div>
