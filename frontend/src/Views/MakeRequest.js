@@ -49,6 +49,7 @@ export default function MakeRequest() {
                         <Form.Control
                             autoFocus
                             type="bookName"
+                            maxLength= "64"
                             value = {bookName}
                             onChange = {(e) => setBookName(e.target.value)}
                         />
@@ -58,6 +59,7 @@ export default function MakeRequest() {
                         <Form.Control
                             autoFocus
                             type="bookAuthor"
+                            maxLength= "64"
                             value = {bookAuthor}
                             onChange = {(e) => setBookAuthor(e.target.value)}
                         />
@@ -67,6 +69,7 @@ export default function MakeRequest() {
                         <Form.Control
                             autoFocus
                             type="bookDesc"
+                            maxLength= "256"
                             value = {bookDesc}
                             onChange = {(e) => setBookDesc(e.target.value)}
                         />
@@ -76,6 +79,7 @@ export default function MakeRequest() {
                         <Form.Control
                             autoFocus
                             type="bookPrice"
+                            maxLength= "32"
                             value = {bookPrice}
                             onChange = {(e) => setBookPrice(e.target.value)}
                         />
@@ -85,6 +89,7 @@ export default function MakeRequest() {
                         <Form.Control
                             autoFocus
                             type="bookGenre"
+                            maxLength= "128"
                             value = {bookGenre}
                             onChange = {(e) => setBookGenre(e.target.value)}
                         />

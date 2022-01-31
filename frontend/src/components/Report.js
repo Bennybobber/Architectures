@@ -117,6 +117,7 @@ export default function Report(props) {
                             autoFocus
                             type="bookName"
                             value = {bookName}
+                            maxLength="64"
                             onChange = {(e) => setBookName(e.target.value)}
                         />
                     </Form.Group>
@@ -126,6 +127,7 @@ export default function Report(props) {
                             autoFocus
                             type="bookAuthor"
                             value = {bookAuthor}
+                            maxLength="64"
                             onChange = {(e) => setBookAuthor(e.target.value)}
                         />
                     </Form.Group>
@@ -135,6 +137,7 @@ export default function Report(props) {
                             autoFocus
                             type="bookDesc"
                             value = {bookDesc}
+                            maxLength="256"
                             onChange = {(e) => setBookDesc(e.target.value)}
                         />
                     </Form.Group>
@@ -143,6 +146,7 @@ export default function Report(props) {
                         <Form.Control
                             autoFocus
                             type="bookPrice"
+                            maxLength= "32"
                             value = {bookPrice}
                             onChange = {(e) => setBookPrice(e.target.value)}
                         />
@@ -152,6 +156,7 @@ export default function Report(props) {
                         <Form.Control
                             autoFocus
                             type="bookGenre"
+                            maxLength="128"
                             value = {bookGenre}
                             onChange = {(e) => setBookGenre(e.target.value)}
                         />
@@ -193,7 +198,7 @@ export default function Report(props) {
                         </Table>
                         <div className = "buttonBox">
                             
-                            {(props.assignedTo === "" && !props.needsMoreDetail) ? (
+                            {(props.assignedTo !== "" && !props.needsMoreDetail) ? (
                                 <h1> Request is being processed... </h1>
                             ) : (
                                 <div>

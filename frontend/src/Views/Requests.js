@@ -58,10 +58,12 @@ export default function Requests() {
     await setBookRequests(bookRequests);
 
     for (let request = 0; request < bookRequests.length; request++) {
-      if (bookRequests[request].needsMoreDetail) {
-        needsWork.push(bookRequests[request]);
-      } else {
-        inQueueRequests.push(bookRequests[request]);
+      if (bookRequests[request].isProcessed === false){
+        if (bookRequests[request].needsMoreDetail) {
+          needsWork.push(bookRequests[request]);
+        } else {
+          inQueueRequests.push(bookRequests[request]);
+        }
       }
     }
     await setBookRequests(inQueueRequests);
@@ -83,18 +85,20 @@ export default function Requests() {
     let availableRequests = [];
     let needsApproval = [];
     for (let book = 0; book < bookRequests.length; book++) {
-      if (bookRequests[book].assignedTo === user._id ) {
-        assignedToBookRequests.push(bookRequests[book])
-      }
-      else if (bookRequests[book].assignedTo === "" && !bookRequests.needsMoreDetail) {
-        availableRequests.push(bookRequests[book])
-      }
-      if(bookRequests[book].needsAuthorizer) {
-        needsApproval.push(bookRequests[request]);
+      if (bookRequests[book].isProcessed === false){
+        if (bookRequests[book].assignedTo === user._id ) {
+          assignedToBookRequests.push(bookRequests[book])
+        }
+        else if (bookRequests[book].assignedTo === "" && !bookRequests.needsMoreDetail) {
+          availableRequests.push(bookRequests[book])
+        }
+        if(bookRequests[book].needsAuthorizer) {
+          needsApproval.push(bookRequests[book]);
+        }
       }
     }
     await setNeedsApprovalRequests(needsApproval);
-    await setAvailableBookRequests(availableRequests);
+    await  setAvailableBookRequests(availableRequests);
     await setAssignedToEmp(assignedToBookRequests);
   }
   if (isAuthenticated && !isEmployee && !isAuthorizer) {
@@ -108,7 +112,9 @@ export default function Requests() {
         bookId = {request._id}
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
+        needsApproval = {request.needsAuthorizer}
         isAdmin = {isAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     ));
     const requiresWorkRequests = needsWorkRequests?.map((request, i) => (
@@ -121,7 +127,9 @@ export default function Requests() {
         bookId = {request._id}
         assignedTo = {request.assignedTo}
         needsMoreDetail = {request.needsMoreDetail}
+        needsApproval = {request.needsAuthorizer}
         isAdmin = {isAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     )); 
         return (
@@ -150,6 +158,8 @@ export default function Requests() {
         needsMoreDetail = {request.needsMoreDetail}
         isAdmin = {isAuthorizer}
         isEmployee = {isEmployee}
+        needsApproval = {request.needsAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     ));
     const yourRequests = assignedToEmp?.map((request, i) => (
@@ -164,6 +174,8 @@ export default function Requests() {
         needsMoreDetail = {request.needsMoreDetail}
         isAdmin = {isAuthorizer}
         isEmployee = {isEmployee}
+        needsApproval = {request.needsAuthorizer}
+        approvalStatus = {request.approvalStatus}
         />
     ));
     return(
@@ -181,9 +193,7 @@ export default function Requests() {
 
   }
   else if (isAuthorizer && isAuthenticated) {
-    console.log(needsApprovalRequests);
-    if ( needsApprovalRequests.length > 1 ){
-      
+    if ( needsApprovalRequests.length > 0 ){
       const adminRequests = needsApprovalRequests?.map((request, i) => (
         <AssignedReport key={request._id}
           bookName = {request.bookName}
@@ -196,6 +206,8 @@ export default function Requests() {
           needsMoreDetail = {request.needsMoreDetail}
           isAdmin = {isAuthorizer}
           isEmployee = {isEmployee}
+          needsApproval = {request.needsAuthorizer}
+          approvalStatus = {request.approvalStatus}
           />
     ));
     return (
@@ -205,11 +217,11 @@ export default function Requests() {
       </div>
     )
     }
-    else {
-      return (
-        <h1> Arse </h1>
-      )
-    }
+    return (
+      <div className="content">
+        <h1> There are no requests to authorise at this moment in time.</h1>
+      </div>
+    )
   }
   else {
     return (
