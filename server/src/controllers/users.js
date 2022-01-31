@@ -13,6 +13,10 @@ const getUsers = ( async (req, res) =>  {
 
 const createUser = ( async (req, res) => {
     try{
+		// Validate user input
+		if (!(req.body.username && req.body.password && req.body.firstName && req.body.lastName)) {
+			res.status(400).send("Missing fields from request");
+		  }
 		const oldUser = await User.findOne({ username: req.body.username });
     	if (oldUser) {
 			// username already exists, so return error

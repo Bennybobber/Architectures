@@ -208,34 +208,26 @@ export default function AssignedReport(props) {
         }
     };
     function denyBookRequest() {
-        const data = {
-            isProcessed: true,
-        }
-        const config = {
-            headers: {
-                'x-access-token': JSON.parse(localStorage.getItem('user')).token
-            }
+        if (window.confirm("This action will delete this book request, are you sure?")){ 
+            const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            const config = {
+                headers: {
+                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                }
             
-          }
-        const url = (`http://localhost:3001/api/requests/` + props.bookId);
-        try{
-            axios.patch(url, data, config)
-            .then(res => {
-                setSuccMsg("Successfully Denied Ticket");
-                window.location.reload(false);
-            })
-            .catch (err => {
+            }
+            try{
+                axios.delete(url, config)
+                .then(res => {
+                    window.location.reload(false);
+                })
+            }
+            catch (err) {
                 alert(err.message);
-                setErrMsg(err.data);
-            })
-        }catch (err) {
-            alert(err.message);
-            setErrMsg(err.data);
+            }
         }
     }
     if(props.isEmployee) {
-
-    
         return(
         <div className ="request">
             <h1> Book Request for {props.bookName} </h1>
@@ -273,8 +265,8 @@ export default function AssignedReport(props) {
                                 </>
 
                             ) : (
-                                (props.assignedTo !== "" && props.approvalStatus === 'In Progress') ? (
-                                    <Button variant="success" className="buttons" onClick={ () => askApproval()}>
+                                (props.assignedTo !== "" && props.approvalStatus === 'In Progress' && !props.needsMoreDetail) ? (
+                                    <Button variant="info" className="buttons" onClick={ () => askApproval()}>
                                         Request Approval
                                     </Button>
                                 ) : (
@@ -284,7 +276,7 @@ export default function AssignedReport(props) {
                             )}
 
                             {(!props.needsMoreDetail && props.assignedTo !== "" && !props.needsApproval && props.approvalStatus === 'In Progress') ? ( 
-                                <Button variant="success" className="buttons" onClick={ () => askForDetails()}>
+                                <Button variant="primary" className="buttons" onClick={ () => askForDetails()}>
                                     Request More Details
                                 </Button>
                             ) : (
@@ -299,13 +291,13 @@ export default function AssignedReport(props) {
                                     </>
                                 )   
                             )}
-                            {(props.assignedTo === "") ? (
+                            {(props.assignedTo === "" && !props.needsMoreDetail) ? (
                                 <Button variant="success" onClick={ () => assignRequest()}>
                                     Assign Book Request
                                 </Button>
                             ) :
-                            (   !props.needsApproval && props.approvalStatus === 'In Progress' ? (
-                                    <Button variant="success" className="buttons" onClick={ () => unassignRequest()}>
+                            (   !props.needsApproval && !props.needsMoreDetail && props.approvalStatus === 'In Progress' ? (
+                                    <Button variant="warning" className="buttons" onClick={ () => unassignRequest()}>
                                         Unassign Book
                                     </Button>
                                 ) : (
@@ -313,26 +305,28 @@ export default function AssignedReport(props) {
                                 )
                                 
                             )}
-                            {((props.approvalStatus === 'Approved' || props.approvalStatus === 'In Progress') && !props.needsAuthorizer) ? (
+                            {((props.approvalStatus === 'In Progress') && !props.needsAuthorizer && props.assignedTo !== "" && !props.needsMoreDetail) ? (
                                 <div>
-                                    <Button variant="success" className="buttons" onClick={ () => unassignRequest()}>
+                                    <Button variant="success" className="buttons" onClick={ () => approveBookRequest()}>
                                         Approve Book Request
                                     </Button>
-                                    <h1> An Authorisor has approved this request</h1>
+                                    <Button variant="danger" className="buttons" onClick={ () => denyBookRequest()}>
+                                        Deny (Cancel) Book Request
+                                    </Button>
                                 </div>
                                 
                             ) : (
                                 <></>
                             )}
-                            {((props.approvalStatus === 'Denied' || props.approvalStatus === 'In Progress') && !props.needsAuthorizer) ? (
-                                <div>
-                                <Button variant="danger" className="buttons" onClick={ () => unassignRequest()}>
-                                    Deny Book Request
-                                </Button>
-                                <h1> An Authorisor has denied this request</h1>
-                            </div>
-                            ) : (
-                                <></>
+                            {(props.approvalStatus === 'Approved') ? (
+                                    <h1> An Authorisor has Approved this request</h1>
+                                ) : (
+                                <> </>
+                            )}
+                            {(props.approvalStatus === 'Denied') ? (
+                                    <h1> An Authorisor has denied this request</h1>
+                                ) : (
+                                <> </>
                             )}
                             
                         </div>

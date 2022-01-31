@@ -101,9 +101,14 @@ export default function MakeRequest() {
 
                         { errMsg ? (
                             <h3 className="error"> { errMsg } </h3>
-                            ) : (
+                        ) : (
+                            <> </>
+                        ) }
+                        { succMsg ? (
                             <h3 className="success"> {succMsg} </h3>
-                            ) }
+                        ) : (
+                            <> </>
+                        )} 
                     </>
                         
                 </Form>

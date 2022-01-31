@@ -86,6 +86,13 @@ function Main() {
             )}
             
         </LinkContainer>
+        <LinkContainer to ="/requests/approved">
+          {isAuthenticated && !isEmployee && !isAuthorizer ? (
+            <Nav.Link> View Approved Requests </Nav.Link>
+          ) : (
+            <> </>
+          )}
+        </LinkContainer>
         <LinkContainer to="/admin/users">
           {isAuthorizer ? (
             <Nav.Link> Manage Users </Nav.Link>

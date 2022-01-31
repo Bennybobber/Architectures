@@ -25,22 +25,22 @@ export default function Requests() {
       getAllUserRequests();
     }
   }, [isEmployee, isAuthorizer, isAuthenticated]);
-  async function onLoad() {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const exp = jwt_decode(user.token);
-      const date = new Date();
-      if (date.getTime() >= exp ){
-        userHasAuthenticated(false);
-      }else {
-        userHasAuthenticated(true);
+    async function onLoad() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const exp = jwt_decode(user.token);
+        const date = new Date();
+        if (date.getTime() >= exp ){
+          userHasAuthenticated(false);
+        }else {
+          userHasAuthenticated(true);
+        }
+        await setEmployee(user.isEmployee);
+        await setAuthorizor(user.isAuthorizer);
       }
-      await setEmployee(user.isEmployee);
-      await setAuthorizor(user.isAuthorizer);
-    }
-    catch(e) {
-      console.log(e);
-    }
+      catch(e) {
+        console.log(e);
+      }
     
   }
   // Retrieve a specific users book requests

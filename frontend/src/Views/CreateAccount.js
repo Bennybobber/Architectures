@@ -69,13 +69,13 @@ export default function CreateAccount (){
                     if (res.status === 201){
                         console.log("Created");
                     }
-                    else{
-                        setErrMsg(res.data);
-                    }
+                })
+                .catch (err => {
+                  setErrMsg(err.response.data);
                 })
       } catch (err) {
-        alert(err.message);
-        setErrMsg(err.data);
+        alert(err);
+        setErrMsg(err);
       }
     }
    if(isAuthenticated && isAuthorizer) {
@@ -120,13 +120,15 @@ export default function CreateAccount (){
             <Form.Check
                 type="checkbox"
                 label="Make Employee"
+                disabled = {isAdmin}
                 onChange={(e) => setIsEmployee(e.target.checked)}
                 />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
+          <Form.Group className="mb-3" controlId="formBasicCheckbox1">
             <Form.Check
                 type="checkbox"
                 label="Make Administrator"
+                disabled = {isEmployee}
                 onChange={(e) => setIsAdmin(e.target.checked)}
              />
           </Form.Group>
