@@ -28,12 +28,14 @@ function Main() {
 
         const date = new Date();
         const token = jwt_decode(user.token);
-        console.log(token);
         
         if ((date.getTime()/1000) > token.exp ){
           await userHasAuthenticated(false);
           localStorage.removeItem('user');
-          history.push("/login");
+          if (window.location.pathname != '/'){
+            history.push("/login")
+          }
+          
         }else {
           await userHasAuthenticated(true);
           if (user.isEmployee) {

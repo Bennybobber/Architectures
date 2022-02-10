@@ -16,28 +16,37 @@ app.use(helmet());
 // using bodyParser to parse JSON bodies into JS objects
 app.use(bodyParser.json());
 
-// enabling CORS for all requests
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
 
-
-// adding morgan to log HTTP requests
-
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+	methods: ['GET', 'POST']
+  }
+});
 
 // start the in-memory MongoDB instance
-console.log(process.env.API_PORT);
+io.on('connection', (socket) => {
+	console.log('a user connected');
+	socket.on("message", (msg) => {
+		console.log(msg);
+		io.emit('message', msg)
+	})
+})
 mongoose
 	.connect(process.env.MONGO_URI,
 		{ 
 			useNewUrlParser: true,
 		})
 	.then(() => {
-		const app = express()
     	app.use(express.json())
 		app.use(cors());
 		app.use(morgan('combined'));
     	app.use("/api", routes);
-
-		app.listen(process.env.API_PORT, () => {
-			console.log("Server has started!")
+		server.listen(process.env.API_PORT, () => {
+			console.log("Server has started on port: " + process.env.API_PORT)
 		})
 	})
 	.catch((error) => {

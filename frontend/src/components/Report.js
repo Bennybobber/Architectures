@@ -67,8 +67,6 @@ export default function Report(props) {
     }
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(event);
-        console.log(bookName);
         setIsEdit(false);
         const data = {
             bookName:bookName,

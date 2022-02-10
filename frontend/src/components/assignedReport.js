@@ -151,7 +151,7 @@ export default function AssignedReport(props) {
         }
     }
 
-    function giveAdminApproval() {
+    function denyApproval() {
         if (window.confirm("Are you sure you want to be assigned this request?")){ 
             const data = {
                 approvalStatus: 'Denied',
@@ -305,7 +305,7 @@ export default function AssignedReport(props) {
                                 )
                                 
                             )}
-                            {((props.approvalStatus === 'In Progress') && !props.needsAuthorizer && props.assignedTo !== "" && !props.needsMoreDetail) ? (
+                            {((props.approvalStatus === 'In Progress') && !props.needsApproval && props.assignedTo !== "" && !props.needsMoreDetail) ? (
                                 <div>
                                     <Button variant="success" className="buttons" onClick={ () => approveBookRequest()}>
                                         Approve Book Request
@@ -319,12 +319,22 @@ export default function AssignedReport(props) {
                                 <></>
                             )}
                             {(props.approvalStatus === 'Approved') ? (
+                                <>
                                     <h1> An Authorisor has Approved this request</h1>
+                                    <Button variant="success" className="buttons" onClick={ () => approveBookRequest()}>
+                                        Approve Book Request
+                                    </Button>
+                                    </>
                                 ) : (
                                 <> </>
                             )}
                             {(props.approvalStatus === 'Denied') ? (
+                                <>
                                     <h1> An Authorisor has denied this request</h1>
+                                    <Button variant="danger" className="buttons" onClick={ () => denyBookRequest()}>
+                                        Deny (Cancel) Book Request
+                                    </Button>
+                                </>
                                 ) : (
                                 <> </>
                             )}
@@ -367,7 +377,7 @@ export default function AssignedReport(props) {
                             <Button variant="success" className="buttons" onClick={ () => giveAdminApproval()}>
                                 Approve Request
                             </Button>
-                            <Button variant="danger" className="buttons" onClick={ () => giveAdminApproval()}>
+                            <Button variant="danger" className="buttons" onClick={ () => denyApproval()}>
                                 Deny Request
                             </Button>
                             
