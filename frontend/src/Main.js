@@ -32,7 +32,7 @@ function Main() {
         if ((date.getTime()/1000) > token.exp ){
           await userHasAuthenticated(false);
           localStorage.removeItem('user');
-          if (window.location.pathname != '/'){
+          if (window.location.pathname !== '/'){
             history.push("/login")
           }
           

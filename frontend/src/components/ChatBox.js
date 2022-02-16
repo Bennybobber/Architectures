@@ -17,25 +17,25 @@ export default function Report(props) {
             const user = JSON.parse(localStorage.getItem('user'));
             if (user.username != '') {
                 userHasAuthenticated(true);
-                setUsername(user.username)
-            }
+                setUsername(user.username);
+            };
         } catch (error) {
             userHasAuthenticated(false);
-        }
+        };
         const newSocket = io(`http://${window.location.hostname}:3001`);
+        newSocket.on("connect", () => {
+            console.log("connected to chat");
+        });
+        newSocket.on("message", message => {
+            let messages = []
+            messages.push(message);
+            setMsgHistory(msgHistory => [...msgHistory, message])
+        });
         setSocket(newSocket);
-        
-        newSocket.on("message", (msg) =>{
-            setResponse(msg);
-            console.log(msg);
-            let msgList = msgHistory;
-            msgList.push(msg);
-            setMsgHistory(msgList);
-            })
-        return () => newSocket.close();
-        
-
-      }, [setSocket, setMsgHistory]);
+        return () => {
+            newSocket.removeAllListeners();
+        }
+      }, [setSocket]);
 
       function handleSubmit(event) {
           event.preventDefault();

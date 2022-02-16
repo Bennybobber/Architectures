@@ -43,7 +43,7 @@ const createUser = ( async (req, res) => {
 
 const getSpecificUser = ( async (req, res) => {
     try {
-		const user = await User.findOne({ _id: req.params.id }).select("-password");
+		const user = await User.findOne({ _id: req.params.username }).select("-password");
 		res.send(user)
 	} catch {
 		res.status(404)
