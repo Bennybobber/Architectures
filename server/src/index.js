@@ -29,14 +29,13 @@ const io = new Server(server, {
 
 // start the in-memory MongoDB instance
 io.on('connection', (socket) => {
-	console.log('a user connected');
 	socket.on("message", (msg) => {
 		console.log(msg);
 		io.emit('message', msg)
 	})
 })
 mongoose
-	.connect(process.env.MONGO_URI,
+	.connect("mongodb+srv://beb:bennybobber22@cluster0.sny8t.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
 		{ 
 			useNewUrlParser: true,
 		})
@@ -45,8 +44,8 @@ mongoose
 		app.use(cors());
 		app.use(morgan('combined'));
     	app.use("/api", routes);
-		server.listen(process.env.API_PORT, () => {
-			console.log("Server has started on port: " + process.env.API_PORT)
+		server.listen(3001, () => {
+			console.log("Server has started on port: " + "3001")
 		})
 	})
 	.catch((error) => {
