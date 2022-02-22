@@ -86,7 +86,6 @@ const registerUser = (async (req, res) => {
 		// check if user already exist
 		// Validate if user exist in our database
 		const oldUser = await User.findOne({ username });
-		console.log(username);
 		if (oldUser) {
 		  
 		  return res.status(409).send("User Already Exists. Please Login");
@@ -114,7 +113,6 @@ const registerUser = (async (req, res) => {
 		user.token = token;
 		user.password = undefined;
 		// return new user
-		console.log(user);
 		res.status(201).json(user);
 	  } catch (err) {
 		console.log(err);
@@ -124,13 +122,14 @@ const registerUser = (async (req, res) => {
 
 const loginUser = (async (req, res) => {
 	try {
-		// Get user input
+		console.log(req.body);
 		const { username, password } = req.body;
-	
 		// Validate user input
 		if (!(username && password)) {
 		  res.status(400).send("Additional input is required");
 		}
+		// Get user input
+		
 		// check to see if user exists in the database
 		const user = await User.findOne({ username });
 	
@@ -150,8 +149,9 @@ const loginUser = (async (req, res) => {
 		  user.password = undefined;
 		  // user
 		  res.status(200).json(user);
+		}else{
+			res.status(404).send("Invalid Credentials");
 		}
-		res.status(404).send("Invalid Credentials");
 	  } catch (err) {
 		console.log(err);
 		res.status(500).send("Internal Server Error");

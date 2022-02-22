@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const schema = mongoose.Schema({
+const UserSchema = mongoose.Schema({
 	firstName: {
         type: String,
         required: [true, 'A firstname is required'],
@@ -37,4 +37,7 @@ const schema = mongoose.Schema({
     },
 })
 
-module.exports = mongoose.model("User", schema)
+UserSchema.statics.generateSalt = function () {
+    
+}
+module.exports = mongoose.model("User", UserSchema)
