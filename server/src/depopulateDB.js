@@ -2,7 +2,10 @@ const User = require('./models/User');
 const bookRequest = require('./models/Request')
 const mongoose = require('mongoose');
 
-
+/**
+ * depopulateDB | A script function that deletes all the
+ * pre-created objects that were populated in populateDB.js
+ */
 async function depopulateDB() {
     try{
         await User.deleteOne({username: 'tim10'});

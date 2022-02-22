@@ -2,7 +2,13 @@ const jwt = require("jsonwebtoken");
 
 const config = process.env;
 
-// Verify the incoming request has a valid token by checking the signature against our stored salt TOKEN_KEY in env variable.
+/**
+ * verifyToken | A middleware function that checks to see if the 
+ * user is properly authenticated, by retrieving their profile from
+ * the database and checking their status.
+ * If the check passes, it will continue to the next functon, otherwise 
+ * it will reject the request with a 401.
+ */
 const verifyToken = (req, res, next) => {
   const token =
     req.body.token || req.query.token || req.headers["x-access-token"];

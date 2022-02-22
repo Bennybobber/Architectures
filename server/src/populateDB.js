@@ -4,7 +4,11 @@ const  bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const mongoose = require('mongoose');
-
+/**
+ * populateDB | A script function that creates a predefined
+ * set of data that can be used to demonstrate the capabilities
+ * of the web application.
+ */
 async function populateDB() {
     const encryptedPassword = await bcrypt.hash('password', 10);
 
