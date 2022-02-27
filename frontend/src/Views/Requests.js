@@ -209,13 +209,13 @@ export default function Requests() {
           needsApproval = {request.needsAuthorizer}
           approvalStatus = {request.approvalStatus}
           />
-    ));
-    return (
-      <div className="content">
-        <h1> You're an admin </h1>
-        {adminRequests}
-      </div>
-    )
+      ));
+      return (
+        <div className="content">
+          <h1> Requests that need approval: </h1>
+          {adminRequests}
+        </div>
+      )
     }
     return (
       <div className="content">

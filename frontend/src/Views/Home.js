@@ -34,14 +34,15 @@ export default function Home() {
   return (
     <div className="Home">
       <div className="lander">
-        <h1>Book Time!</h1>
-        <p className="text-muted">Browse all our books!</p>
+        <h1>Welcome to the book request system</h1>
+        <p className="text-muted">Need help? Use our online chat to connect to 
+        people who can help with any questions you may have.</p>
         <div className ="chatBox">
           {isAuthenticated ? (
             <ChatBox></ChatBox>
           )
           :
-          ( <h1> You Must Be Logged In To Use The Chat Function</h1>)}
+          ( <h1 id="chat"> You Must Be Logged In To Use The Chat Function</h1>)}
           
         </div>
       </div>

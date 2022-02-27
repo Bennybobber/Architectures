@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("./authentication/auth");
-const empCheck = require('./authentication/employeeCheck');
+const authCheck = require('./authentication/authorizerCheck');
+const workerCheck = require('./authentication/workerCheck')
 
 
 const {
@@ -30,22 +31,22 @@ router.post("/register", registerUser);
 router.post('/login', loginUser);
 
 // Get all users only employees or Authorizers can access
-router.get("/users", auth, empCheck, getUsers);
+router.get("/users", auth, workerCheck, getUsers);
 
-// Add a new user only employees or Authorizers can access
-router.post("/users", auth, empCheck, createUser);
+// Add a new user only Authorizers can access this route
+router.post("/users", auth, authCheck, createUser);
 
 // Get individual user only employees or Authorizers can access
-router.get("/users/:id", auth, empCheck, getSpecificUser);
+router.get("/users/:id", auth, getSpecificUser);
 
 // Update a user only employees or Authorizers can access
-router.patch("/users/:id", auth, empCheck, modifyUser);
+router.patch("/users/:id", auth, authCheck, modifyUser);
 
 // Delete a user
-router.delete("/users/:id", auth, empCheck, deleteUser);
+router.delete("/users/:id", auth, authCheck, deleteUser);
 
 // Get all requests
-router.get("/requests", auth, empCheck, getAllRequests);
+router.get("/requests", auth, workerCheck, getAllRequests);
 
 // Makes a request based on incoming data
 router.post("/requests", auth, makeRequest);

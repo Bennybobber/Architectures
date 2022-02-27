@@ -1,0 +1,35 @@
+.chatLog{
+    text-align: left;
+    padding: 1%;
+}
+.messages{
+    border-style: solid;
+    padding: 1%;
+    width: 100%;
+    height: 500px;
+    max-height: 500px;
+    
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+}
+section{
+    width: 100%;
+    overflow-y: scroll;
+    flex: 1 auto;
+    height: 100%;
+  }
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+li{
+    display:flex;
+}
+
+li h5{
+    font-weight: bold;
+}

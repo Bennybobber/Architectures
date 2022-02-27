@@ -20,6 +20,7 @@ const getAllRequests = (async (req, res) => {
  * @return {Object} request | The created bookRequest object is returned to user after successful creation
  */
 const makeRequest = (async (req, res) => {
+	console.log(req.user);
     try{
         const request = new bookRequest({
             bookName: req.body.bookName,
@@ -27,8 +28,8 @@ const makeRequest = (async (req, res) => {
             bookDesc: req.body.bookDesc,
             bookGenre: req.body.bookGenre,
             bookPrice: req.body.bookPrice,
-            date: req.body.date,
-            userId: jwt_decode(req.body.token).user_id,
+            date: new Date(),
+            userId: req.user._id,
         })
         await request.save();
         return res.status(201).send(request);
@@ -45,10 +46,11 @@ const makeRequest = (async (req, res) => {
 const getRequest = (async (req, res) => {
     try {
 		const request = await bookRequest.findOne({ _id: req.params.id });
-		res.status(200).send(request);
+		console.log(request);
+		return res.status(200).send(request);
 	} catch (error){
-		res.status(404);
-		res.send({ error: "Unable to retrieve book request" , message: error.message });
+		if (error.message.includes('Cast to ObjectId failed for value')) return res.status(404).send('Book Request not found');
+		return res.status(404).send({ error: "Unable to retrieve book request" , message: error.message });
 	}
 });
 
@@ -60,10 +62,10 @@ const getRequest = (async (req, res) => {
 const getUsersRequests = (async (req, res) => {
     try {
 		const requests = await bookRequest.find({ userId: req.params.id });
-		res.send(requests);
+		return res.send(requests);
 	} catch (error) {
-		res.status(404);
-		res.send({ error: "Unable to retrieve users book requests", message: error.message });
+		if (error.message.includes('Cast to ObjectId failed for value')) return res.status(404).send('Book Request not found');
+		return res.status(404).send({ error: "Unable to retrieve users book requests", message: error.message });
 	}
 });
 
@@ -74,12 +76,30 @@ const getUsersRequests = (async (req, res) => {
  */
 const updateRequest = (async (req, res) => {
     try{
-		await bookRequest.findOneAndUpdate({ _id: req.params.id }, req.body)
-		res.status(204).send( { message: "Successfully amended book request"});
+		if (req.user.isAuthorizer || req.user.isEmployee){
+			await bookRequest.findOneAndUpdate({ _id: req.params.id }, req.body)
+			return res.status(200).send( { message: "Successfully amended book request"});
+		} else {
+			const book = await bookRequest.findOne({ _id: req.params.id});
+			if (book.userId == req.user._id){
+				delete req.body['assignedTo']
+				delete req.body['date']
+				delete req.body['approvalStatus']
+				delete req.body['needsMoreDetail']
+				delete req.body['needsAuthorizer']
+				delete req.body['isProcessed']
+
+				
+				await bookRequest.findOneAndUpdate({ _id: req.params.id }, req.body);
+				const updatedBook = await bookRequest.findOne({ _id: req.params.id});
+				res.status(200).send( { message: "Successfully amended book request", book: updatedBook});
+			}
+
+		}
+		
 	} catch (error) {
-		console.log(e);
-		res.status(500);
-		res.send({error: "Error occured when trying to update book request", message: error.message});
+		if (error.message.includes('Cast to ObjectId failed for value')) return res.status(404).send('Book Request not found');
+		return res.status(500).send({error: "Error occured when trying to update book request", message: error.message});
 	}
 });
 
@@ -90,11 +110,20 @@ const updateRequest = (async (req, res) => {
  */
 const deleteRequest = (async (req, res) => {
     try {
-		await bookRequest.deleteOne({ _id: req.params.id })
-		res.status(204).send( { message: "Successfully Deleted Book Request"});
+		if (req.user.isAuthorizer || req.user.isEmployee){
+			await bookRequest.deleteOne({ _id: req.params.id })
+			return res.status(204).send( { message: "Successfully Deleted Book Request"});
+		} else {
+			const book = await bookRequest.findOne({ _id: req.params.id});
+			if (book.userId == req.user._id) {
+				await bookRequest.deleteOne({ _id: req.params.id })
+				return res.status(204).send( { message: "Successfully Deleted Book Request"});
+			}
+			
+		}
 	} catch (error) {
-		res.status(500);
-		res.send({ error: "Unable to delete book request", message: error.message });
+		if (error.message.includes('Cast to ObjectId failed for value')) return res.status(404).send('Book Request not found');
+		return res.status(500).send({ error: "Unable to delete book request", message: error.message });
 	}
 });
 module.exports = {

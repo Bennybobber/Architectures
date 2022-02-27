@@ -101,7 +101,7 @@ export default function Register() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <Button block size="lg" type="submit" id='register' disabled={!validateForm()}>
           Register
         </Button>
         { errMsg &&

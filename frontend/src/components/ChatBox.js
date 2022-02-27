@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import io from 'socket.io-client';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import jwt_decode from "jwt-decode";
+import "../styles/chat.css";
 
 export default function Report(props) { 
     const [socket, setSocket] = useState(null);
@@ -53,13 +53,23 @@ export default function Report(props) {
       
 
       const chatLog = msgHistory?.map((message, i) => (
-        <p key={message.message} >{message.username} : {message.message}</p>
+            <li key={message.message} >
+                <h5>{message.username} </h5>
+                <p> : {message.message}</p>
+            </li>
+        
       ));
       return (
-          <div className="chatBox">
-            <h1> {chatLog} </h1>
+          <div className="messages">
+            <section id="chatLog" className="chatLog">
+                <ul>
+                    {chatLog}
+                    
+                </ul>
+
+            </section>
             <Form onSubmit = {handleSubmit}>
-                <Form.Group size="lg" controlId = "messageBox">
+                <Form.Group size="lg" controlId="messageBox">
                     <Form.Label> Message Box </Form.Label>
                     <Form.Control 
                         autoFocus
@@ -69,7 +79,7 @@ export default function Report(props) {
                         onChange = {(e) => setMessage(e.target.value)}
                         />
                 </Form.Group>
-                <Button block size="lg" type="submit" >
+                <Button block size="lg" id='chatB' type="submit" >
                         Submit Message
                 </Button>
             </Form>

@@ -56,10 +56,17 @@ const createUser = ( async (req, res) => {
  */
 const getSpecificUser = ( async (req, res) => {
     try {
-		const user = await User.findOne({ _id: req.params.username }).select("-password");
-		return res.status(200).send(user);
+		if (req.user.isAuthorizer || req.user.isEmployee || req.user._id == req.params.id){
+			const user = await User.findOne({ _id: req.params.id }).select("-password");
+			if (user === null) return res.status(404).send('The requested user does not exist');
+			return res.status(200).send(user);
+
+		}else {
+			return res.status(401).send('You do not have permission for this action.');
+		}
+		
 	} catch {
-		return res.status(404).send({ error: "User doesn't exist!" });
+		return res.status(404).send("User doesn't exist!");
 	}
 })
 
@@ -73,7 +80,7 @@ const deleteUser = ( async (req, res) => {
 		await User.deleteOne({ _id: req.params.id })
 		return res.status(204).send("Successfully deleted user");
 	} catch {
-		return res.status(404).send({ error: "User doesn't exist!" })
+		return res.status(404).send("User doesn't exist!")
 	}
 })
 
@@ -84,10 +91,11 @@ const deleteUser = ( async (req, res) => {
  */
 const modifyUser = ( async (req, res) => {
     try {
-		const user = await User.findOneAndUpdate({ _id: req.params.id }, req.body);
-		return res.status(204).send(user);
+		await User.findOneAndUpdate({ _id: req.params.id }, req.body);
+		const user = User.findOne({ _id: req.params.id });
+		return res.status(200).send(user);
 	} catch {
-		return res.status(404).send({ error: "User doesn't exist!" });
+		return res.status(404).send("User doesn't exist!");
 	}
 })
 

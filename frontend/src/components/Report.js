@@ -211,7 +211,7 @@ export default function Report(props) {
                                         <Button variant="success" className="buttons"  onClick={ () => setIsEdit(true)}>
                                             Edit Book Request
                                         </Button>
-                                        <Button variant="danger" className="buttons"  onClick={ () => cancelRequest()}>
+                                        <Button variant="danger" id= {'cancel-'+bookName} className="buttons"  onClick={ () => cancelRequest()}>
                                             Cancel Request
                                         </Button>
                                     </div>

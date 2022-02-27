@@ -9,19 +9,18 @@ const config = process.env;
  * If the check passes, it will continue to the next functon, otherwise 
  * it will reject the request with a 401.
  */
-const  verifyRole = async (req, res, next) => {
-    const user_id = req.user.user_id;
+const  verifyAdmin = async (req, res, next) => {
     try{ 
-        const user = await User.findOne({ _id: user_id })
-		if (user.isEmployee == true || user.isAuthorizer == true){
+		if (req.user.isAuthorizer == true){
 			return next();
 		} else {
 			res.status(401);
-			return res.status(401).send("Not Authorised For This Request");
+			return res.status(401).send("Not Authorised For This Request, Must Be Admin");
 		}
-    } catch {
+    } catch (error){
+        console.log(error);
         return res.status(401).send("Invalid Token");
     }
 };
 
-module.exports = verifyRole;
+module.exports = verifyAdmin;

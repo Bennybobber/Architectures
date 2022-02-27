@@ -52,7 +52,7 @@ export default function ManageAccounts() {
                 }
             }
             else {
-                customers.push(users[user]);
+                if (!users[user].isAuthorizer) customers.push(users[user]);
             }
         }
         setClientUsers(customers);

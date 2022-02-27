@@ -42,7 +42,7 @@ export default function User (props) {
                             <td>{props.userId}</td>
                             <td>{props.firstName}</td>
                             <td>{props.lastName}</td>
-                            <td>{(props.isEmployee) ? 'Employee' : 'Client'}</td>
+                            <td>{(props.isEmployee) || (props.isAuthorizer) ? 'Employee' : 'Client'}</td>
                             <td>{(props.isAuthorizer) ? 'Admin' : 'Not Admin'}</td>
                         </tr>
                     </tbody>
