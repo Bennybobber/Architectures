@@ -8,7 +8,7 @@ export default function CompletedRequests() {
     const [isEmployee, setEmployee] = useState(false);
     const [isAuthorizer , setAuthorizor]= useState(false);
     const [BookRequests, setBookRequests] = useState([]);
-
+   // Verifies the user is logged in.
     useEffect(() => {
         onLoad();
         if (isAuthenticated && (!isEmployee && !isAuthorizer)) {
@@ -34,8 +34,9 @@ export default function CompletedRequests() {
         }  
     }
 
-
+// Retrieves all of the user requests and only takes out the processed ones.
 async function GetUserRequests() {
+  try{
     const user = JSON.parse(localStorage.getItem('user'));
     const request = await axios.get(`http://localhost:3001/api/user/requests/${user._id}`,
     {
@@ -54,10 +55,12 @@ async function GetUserRequests() {
       }
     }
     await setBookRequests(books);
+
+  } catch (error) {
+    console.log(error);
   }
-
-
-
+    
+  }
     if (isAuthenticated) {
         const bookRequests = BookRequests?.map((request, i) => (
             <Report key={request._id}

@@ -92,9 +92,12 @@ const deleteUser = ( async (req, res) => {
 const modifyUser = ( async (req, res) => {
     try {
 		await User.findOneAndUpdate({ _id: req.params.id }, req.body);
-		const user = User.findOne({ _id: req.params.id });
-		return res.status(200).send(user);
-	} catch {
+		return res.status(200).send();
+	} catch (error) {
+		console.log(error.message);
+		if(error.message.includes("duplicate key error")) {
+			return res.status(409).send("Username Already In Use");
+		}
 		return res.status(404).send("User doesn't exist!");
 	}
 })

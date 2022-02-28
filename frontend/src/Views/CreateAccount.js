@@ -23,7 +23,8 @@ export default function CreateAccount (){
     useEffect(() => {
         onLoad();
       }, [userHasAuthenticated, isAuthorizer]);
-      
+    
+    // Checks the user is logged in.
     async function onLoad() {
     try {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -40,11 +41,12 @@ export default function CreateAccount (){
             console.log(e);
         }
       }
-  
+    // Ensures that there is a username and a password before being able to submit.
     function validateForm() {
       return username.length > 0 && password.length > 0;
     }
-  
+    
+    // Handles the submit of creating a new account.
     function handleSubmit(event) {
         event.preventDefault();
         try{
@@ -66,9 +68,7 @@ export default function CreateAccount (){
             axios.post(url, data, config)
                 .then(res => {
                     console.log(res.status);
-                    if (res.status === 201){
-                        console.log("Created");
-                    }
+                    setErrMsg('');
                 })
                 .catch (err => {
                   setErrMsg(err.response.data);

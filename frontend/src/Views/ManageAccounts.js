@@ -10,6 +10,7 @@ export default function ManageAccounts() {
     const [clientUsers, setClientUsers] = useState([]);
     const [empUsers, setEmpUsers] = useState([]);
 
+    // Check if user is authorised to view the page.
     useEffect(() => {
         onLoad();
         if (isAuthorizer) {
@@ -34,29 +35,36 @@ export default function ManageAccounts() {
         }
       }
 
+    // Retrieves all the users if they're authenticated.
     async function getAllUsers() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const request = await axios.get(`http://localhost:3001/api/users`,
-        {
-            headers: {
-                'x-access-token': user.token
-            }
-        })
-        const users =  await request.data;
-        let employees = [];
-        let customers = [];
-        for (let user = 0; user < users.length; user++ ) {
-            if (users[user].isEmployee ) {
-                if (!users[user].isAuthorizer){
-                    employees.push(users[user]);
+        try{
+            const user = JSON.parse(localStorage.getItem('user'));
+            const request = await axios.get(`http://localhost:3001/api/users`,
+            {
+                headers: {
+                    'x-access-token': user.token
+                }
+            })
+            const users =  await request.data;
+            let employees = [];
+            let customers = [];
+            for (let user = 0; user < users.length; user++ ) {
+                if (users[user].isEmployee ) {
+                    if (!users[user].isAuthorizer){
+                        employees.push(users[user]);
+                    }
+                }
+                else {
+                    if (!users[user].isAuthorizer) customers.push(users[user]);
                 }
             }
-            else {
-                if (!users[user].isAuthorizer) customers.push(users[user]);
+            setClientUsers(customers);
+            setEmpUsers(employees);
             }
-        }
-        setClientUsers(customers);
-        setEmpUsers(employees);
+            catch(error) {
+                console.log(error);
+            }
+        
     }
     if( isAuthenticated && isAuthorizer){
     const customerUsers = clientUsers?.map((user, i) => (

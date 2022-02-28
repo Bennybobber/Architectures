@@ -141,12 +141,13 @@ function Main() {
       
     </div>
   );
+  // Removes user from the localstorage, and directs them to the login page.
   function handleLogout() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
     setAuthorizor(false);
     setEmployee(false);
-    history.push("/");
+    history.push("/login");
   }
   
 }

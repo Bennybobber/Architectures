@@ -9,7 +9,7 @@ export default function Home() {
   const [isEmployee, setEmployee] = useState(false);
   const [isAuthorizer , setAuthorizor]= useState(false);
 
-
+   // Get the login status of the user. 
    useEffect(() => {
     onLoad();
   }, [isEmployee, isAuthorizer, isAuthenticated]);

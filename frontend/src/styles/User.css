@@ -17,7 +17,8 @@ h1 {
 
 .Buttons{
     margin:auto;
-    width: 10%;
+    width: 20%;
+    display:flex;
 }
 
 .button{

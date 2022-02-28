@@ -20,7 +20,6 @@ const getAllRequests = (async (req, res) => {
  * @return {Object} request | The created bookRequest object is returned to user after successful creation
  */
 const makeRequest = (async (req, res) => {
-	console.log(req.user);
     try{
         const request = new bookRequest({
             bookName: req.body.bookName,
@@ -85,7 +84,6 @@ const updateRequest = (async (req, res) => {
 				delete req.body['assignedTo']
 				delete req.body['date']
 				delete req.body['approvalStatus']
-				delete req.body['needsMoreDetail']
 				delete req.body['needsAuthorizer']
 				delete req.body['isProcessed']
 

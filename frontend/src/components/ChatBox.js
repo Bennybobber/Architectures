@@ -7,51 +7,52 @@ import "../styles/chat.css";
 export default function Report(props) { 
     const [socket, setSocket] = useState(null);
     const [message, setMessage] = useState('');
-    const [isAuthenticated, userHasAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
-    const [response, setResponse] = useState(undefined);
     const [msgHistory, setMsgHistory] = useState([]);
 
     useEffect(() => {
         try {
             const user = JSON.parse(localStorage.getItem('user'));
-            if (user.username != '') {
-                userHasAuthenticated(true);
+            if (user.username !== '') {
                 setUsername(user.username);
             };
         } catch (error) {
-            userHasAuthenticated(false);
+            console.log(error);
         };
-        const newSocket = io(`http://${window.location.hostname}:3001`);
-        newSocket.on("connect", () => {
-            console.log("connected to chat");
-        });
-        newSocket.on("message", message => {
-            let messages = []
-            messages.push(message);
-            setMsgHistory(msgHistory => [...msgHistory, message])
-        });
-        setSocket(newSocket);
-        return () => {
-            newSocket.removeAllListeners();
+        // Socket setup with the chat server. 
+        try{
+            const newSocket = io(`http://${window.location.hostname}:3001`);
+            newSocket.on("connect", () => {
+                console.log("connected to chat");
+            });
+            newSocket.on("message", message => {
+                let messages = []
+                messages.push(message);
+                setMsgHistory(msgHistory => [...msgHistory, message])
+            });
+            setSocket(newSocket);
+            return () => {
+                newSocket.removeAllListeners();
+            }
+        } catch (error) {
+            console.log(error);
         }
+        
       }, [setSocket]);
 
+      // Sends the messages up to the server via socket.io
       function handleSubmit(event) {
-          event.preventDefault();
-          let token = '';
-          try{
-            const user = JSON.parse(localStorage.getItem('user'));
-            token = user.token
-          } catch (e)
-          {
-
-          }
-          socket.emit("message", {message: message, username: username});
-          setMessage('');
+        try{
+            event.preventDefault();
+            socket.emit("message", {message: message, username: username});
+            setMessage('');
+        } catch (error) {
+            console.log(error);
+        }
+          
       }
       
-
+      // Renders the list of messages 
       const chatLog = msgHistory?.map((message, i) => (
             <li key={message.message} >
                 <h5>{message.username} </h5>
