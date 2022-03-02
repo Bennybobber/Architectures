@@ -127,7 +127,7 @@ export default function User (props) {
                   <Button block size="lg" type="submit" disabled={!validateForm()}>
                     Submit Changes
                   </Button>
-                  { errMsg !== '' ? (<> <h3 className="error"> { errMsg } </h3>  </>) : (<> arse</>)
+                  { errMsg !== '' ? (<> <h3 className="error"> { errMsg } </h3>  </>) : (<> </>)
                     }
                 </Form>
               </div>

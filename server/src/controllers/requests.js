@@ -46,6 +46,7 @@ const getRequest = (async (req, res) => {
     try {
 		const request = await bookRequest.findOne({ _id: req.params.id });
 		console.log(request);
+		if (request === null) return res.status(404).send({message: 'This Request Does Not Exist'});
 		return res.status(200).send(request);
 	} catch (error){
 		if (error.message.includes('Cast to ObjectId failed for value')) return res.status(404).send('Book Request not found');
@@ -84,6 +85,7 @@ const updateRequest = (async (req, res) => {
 				delete req.body['assignedTo']
 				delete req.body['date']
 				delete req.body['approvalStatus']
+				if (req.body['needsMoreDetail'] == true) delete req.body['needsMoreDetail'];
 				delete req.body['needsAuthorizer']
 				delete req.body['isProcessed']
 

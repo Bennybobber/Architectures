@@ -134,8 +134,6 @@ export default function MakeRequest() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(event);
-        console.log(bookName);
         try{
             axios.post(`http://localhost:3001/api/requests`,
               {

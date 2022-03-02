@@ -120,9 +120,13 @@ export default function Requests() {
 
   // Sorts a list by a given JSON field.
   const sort_by = (field, reverse, primer) => {
-
+    //eslint-disable-next-line
+    const regexp = /^[0-9\b\.]+$/;
     const key = primer ?
       function(x) {
+        if (regexp.test(x[field])){
+          return parseFloat(x[field])
+        }
         return primer(x[field])
       } :
       function(x) {
@@ -130,7 +134,7 @@ export default function Requests() {
       };
   
     reverse = !reverse ? 1 : -1;
-  
+    
     return function(a, b) {
       return (a = key(a), b = key(b), reverse * ((a > b) - (b > a)));
     }
@@ -156,6 +160,7 @@ export default function Requests() {
   }
   // If they're a customer, only show their reports. 
   if (isAuthenticated && !isEmployee && !isAuthorizer) {
+    console.log(sort);
     const bookRequests = BookRequests.sort(sort_by(sort, false, (a) =>  a.toUpperCase()))?.map((request, i) => (
       <Report key={request._id}
         bookName = {request.bookName}

@@ -69,6 +69,12 @@ export default function CreateAccount (){
                 .then(res => {
                     console.log(res.status);
                     setErrMsg('');
+                    setUsername("");
+                    setfirstName("");
+                    setlastName("");
+                    setPassword("");
+                    setIsEmployee(false);
+                    setIsAdmin(false);
                 })
                 .catch (err => {
                   setErrMsg(err.response.data);

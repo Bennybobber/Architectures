@@ -92,7 +92,8 @@ const deleteUser = ( async (req, res) => {
 const modifyUser = ( async (req, res) => {
     try {
 		await User.findOneAndUpdate({ _id: req.params.id }, req.body);
-		return res.status(200).send();
+		user = await User.findOne({ _id: req.params.id });
+		return res.status(200).send(user);
 	} catch (error) {
 		console.log(error.message);
 		if(error.message.includes("duplicate key error")) {
