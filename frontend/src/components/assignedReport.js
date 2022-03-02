@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import "../styles/Report.css";
@@ -6,236 +6,226 @@ import axios from 'axios';
 
 
 export default function AssignedReport(props) {
-    const [errMsg, setErrMsg] = useState("");
-    const [succMsg, setSuccMsg] = useState("");
+
+    // Unassigns a report from the current employee, so it can be picked up by others.
     function unassignRequest() {
-        console.log(JSON.parse(localStorage.getItem('user'))._id);
-        if (window.confirm("Are you sure you want to be assigned this request?")){ 
-            const data = {
-                assignedTo: "",
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
-                }
-                
-              }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
-                axios.patch(url, data, config)
-                .then(res => {
-                    setSuccMsg("Request has been unassigned");
-                    window.location.reload(false);
-                  })
-                .catch (err => {
-                  alert(err.message);
-                  setErrMsg(err.data);
-                })
-            }
-            catch (error){
-                console.log()
-            }
-    }
-}
-    function askForDetails() {
-        if (window.confirm("Are you sure you want to ask for more details from the user?")){
-            const data = {
-                needsMoreDetail: true,
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
-                }
-                
-            }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
-                axios.patch(url, data, config)
-                .then(res => {
-                    setSuccMsg("Details requested");
-                    window.location.reload(false);
-                  })
-                .catch (err => {
-                  alert(err.message);
-                  setErrMsg(err.data);
-                })
-            }
-            catch (error){
-                console.log()
-            }
-        }
-    }
-    function askApproval() {
-        if (window.confirm("Are you sure you want to ask for approval for this request?")){
-            const data = {
-                needsAuthorizer: true,
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
-                }
-                
-            }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
-                axios.patch(url, data, config)
-                .then(res => {
-                    setSuccMsg("Successfully Assigned Ticket");
-                    window.location.reload(false);
-                })
-                .catch (err => {
-                    alert(err.message);
-                    setErrMsg(err.data);
-                })
-            }catch (err) {
-                alert(err.message);
-                setErrMsg(err.data);
-            }
-        }
-    }
-    function assignRequest() {
-        if (window.confirm("Are you sure you want to be assigned this request?")){ 
-            const data = {
-                assignedTo: JSON.parse(localStorage.getItem('user'))._id,
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
-                }
-                
-              }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
-                axios.patch(url, data, config)
-                .then(res => {
-                    setSuccMsg("Successfully Assigned Ticket");
-                    window.location.reload(false);
-                })
-                .catch (err => {
-                    alert(err.message);
-                    setErrMsg(err.data);
-                })
-            }catch (err) {
-                alert(err.message);
-                setErrMsg(err.data);
-            }
-    }
-    }
-    function giveAdminApproval() {
-        if (window.confirm("Are you sure you want to be assigned this request?")){ 
-            const data = {
-                approvalStatus: 'Approved',
-                needsAuthorizer: false,
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
-                }
-                
-              }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
-                axios.patch(url, data, config)
-                .then(res => {
-                    setSuccMsg("Successfully Assigned Ticket");
-                    window.location.reload(false);
-                })
-                .catch (err => {
-                    alert(err.message);
-                    setErrMsg(err.data);
-                })
-            }catch (err) {
-                alert(err.message);
-                setErrMsg(err.data);
-            }
-        }
-    }
-
-    function giveAdminApproval() {
-        if (window.confirm("Are you sure you want to be assigned this request?")){ 
-            const data = {
-                approvalStatus: 'Denied',
-                needsAuthorizer: false,
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
-                }
-                
-              }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
-                axios.patch(url, data, config)
-                .then(res => {
-                    setSuccMsg("Successfully Denied Ticket");
-                    window.location.reload(false);
-                })
-                .catch (err => {
-                    alert(err.message);
-                    setErrMsg(err.data);
-                })
-            }catch (err) {
-                alert(err.message);
-                setErrMsg(err.data);
-            }
-        }
-    }
-
-    function approveBookRequest() {
-        const data = {
-            isProcessed: true,
-        }
-        const config = {
-            headers: {
-                'x-access-token': JSON.parse(localStorage.getItem('user')).token
-            }
-            
-          }
-        const url = (`http://localhost:3001/api/requests/` + props.bookId);
         try{
+            console.log(JSON.parse(localStorage.getItem('user'))._id);
+            if (window.confirm("Are you sure you want to be assigned this request?")){ 
+                const data = {
+                    assignedTo: "",
+                }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            
+                axios.patch(url, data, config)
+                .then(res => {
+                    window.location.reload(false);
+                  })
+                .catch (err => {
+                  alert(err.message);
+                })
+            }
+        }
+        
+        catch (error){
+                console.log()
+        }
+    }
+
+    // Set the status on a report that it requires more details, this notifies and moves from the available reports.
+    function askForDetails() {
+        try{
+            if (window.confirm("Are you sure you want to ask for more details from the user?")){
+                const data = {
+                    needsMoreDetail: true,
+                }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            
+                    axios.patch(url, data, config)
+                    .then(res => {
+                        window.location.reload(false);
+                      })
+                    .catch (err => {
+                      alert(err.message);
+                    })
+                }
+        }
+        catch (error){
+            console.log()
+        }
+    }
+    
+    // Sets the status on a report to ask for approval from an authorizor
+    function askApproval() {
+        try{
+            if (window.confirm("Are you sure you want to ask for approval for this request?")){
+                const data = {
+                    needsAuthorizer: true,
+                }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            
+                axios.patch(url, data, config)
+                .then(res => {
+                    window.location.reload(false);
+                })
+                .catch (err => {
+                    alert(err.message);
+                })
+            }
+        }catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // Assigns the request to the current employee user
+    function assignRequest() {
+        try{
+            if (window.confirm("Are you sure you want to be assigned this request?")){ 
+                const data = {
+                    assignedTo: JSON.parse(localStorage.getItem('user'))._id,
+                }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            
+                axios.patch(url, data, config)
+                .then(res => {
+                    window.location.reload(false);
+                })
+                .catch (err => {
+                    alert(err.message);
+                })
+            }
+        }catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // If an admin, they can give the approval for the request, which means an employee can complete the request
+    function giveAdminApproval() {
+        try{
+            if (window.confirm("Are you sure you want to be assigned this request?")){ 
+                const data = {
+                    approvalStatus: 'Approved',
+                    needsAuthorizer: false,
+                }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            
+                axios.patch(url, data, config)
+                .then(res => {
+                    window.location.reload(false);
+                })
+                .catch (err => {
+                    alert(err.message);
+                })
+            }
+        }catch (err) {
+            alert(err.message);
+        }
+    }
+    // If an admin, they can deny approval for a request, marking it to be deleted.
+    function denyApproval() {
+        try{
+            if (window.confirm("Are you sure you want to be assigned this request?")){ 
+                const data = {
+                    approvalStatus: 'Denied',
+                    needsAuthorizer: false,
+                }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+                axios.patch(url, data, config)
+                .then(res => {
+                    window.location.reload(false);
+                })
+                .catch (err => {
+                    alert(err.message);
+                })
+            }
+        }catch (err) {
+            alert(err.message);
+        }
+    }
+    // If an Employee, they can mark the request as approved.
+    function approveBookRequest() {
+        try{
+            const data = {
+                isProcessed: true,
+            }
+            const config = {
+                headers: {
+                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                }
+            
+            }
+            const url = (`http://localhost:3001/api/requests/` + props.bookId);
+        
             axios.patch(url, data, config)
             .then(res => {
-                setSuccMsg("Successfully Denied Ticket");
                 window.location.reload(false);
             })
             .catch (err => {
                 alert(err.message);
-                setErrMsg(err.data);
             })
+        
         }catch (err) {
             alert(err.message);
-            setErrMsg(err.data);
         }
     };
-    function denyBookRequest() {
-        const data = {
-            isProcessed: true,
-        }
-        const config = {
-            headers: {
-                'x-access-token': JSON.parse(localStorage.getItem('user')).token
-            }
-            
-          }
-        const url = (`http://localhost:3001/api/requests/` + props.bookId);
-        try{
-            axios.patch(url, data, config)
-            .then(res => {
-                setSuccMsg("Successfully Denied Ticket");
-                window.location.reload(false);
-            })
-            .catch (err => {
-                alert(err.message);
-                setErrMsg(err.data);
-            })
-        }catch (err) {
-            alert(err.message);
-            setErrMsg(err.data);
-        }
-    }
-    if(props.isEmployee) {
 
-    
+    // If an Employee, they can deny the book request.
+    function denyBookRequest() {
+        try{
+            if (window.confirm("This action will delete this book request, are you sure?")){ 
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
+                }
+                axios.delete(url, config)
+                .then(res => {
+                    window.location.reload(false);
+                })
+            }
+        }
+        catch (err) {
+            alert(err.message);
+        } 
+    }
+    //Render HTML... 
+    if(props.isEmployee) {
         return(
         <div className ="request">
             <h1> Book Request for {props.bookName} </h1>
@@ -273,8 +263,8 @@ export default function AssignedReport(props) {
                                 </>
 
                             ) : (
-                                (props.assignedTo !== "" && props.approvalStatus === 'In Progress') ? (
-                                    <Button variant="success" className="buttons" onClick={ () => askApproval()}>
+                                (props.assignedTo !== "" && props.approvalStatus === 'In Progress' && !props.needsMoreDetail) ? (
+                                    <Button variant="info" className="buttons" onClick={ () => askApproval()}>
                                         Request Approval
                                     </Button>
                                 ) : (
@@ -284,7 +274,7 @@ export default function AssignedReport(props) {
                             )}
 
                             {(!props.needsMoreDetail && props.assignedTo !== "" && !props.needsApproval && props.approvalStatus === 'In Progress') ? ( 
-                                <Button variant="success" className="buttons" onClick={ () => askForDetails()}>
+                                <Button variant="primary" className="buttons" onClick={ () => askForDetails()}>
                                     Request More Details
                                 </Button>
                             ) : (
@@ -299,13 +289,13 @@ export default function AssignedReport(props) {
                                     </>
                                 )   
                             )}
-                            {(props.assignedTo === "") ? (
+                            {(props.assignedTo === "" && !props.needsMoreDetail) ? (
                                 <Button variant="success" onClick={ () => assignRequest()}>
                                     Assign Book Request
                                 </Button>
                             ) :
-                            (   !props.needsApproval && props.approvalStatus === 'In Progress' ? (
-                                    <Button variant="success" className="buttons" onClick={ () => unassignRequest()}>
+                            (   !props.needsApproval && !props.needsMoreDetail && props.approvalStatus === 'In Progress' ? (
+                                    <Button variant="warning" className="buttons" onClick={ () => unassignRequest()}>
                                         Unassign Book
                                     </Button>
                                 ) : (
@@ -313,26 +303,38 @@ export default function AssignedReport(props) {
                                 )
                                 
                             )}
-                            {((props.approvalStatus === 'Approved' || props.approvalStatus === 'In Progress') && !props.needsAuthorizer) ? (
+                            {((props.approvalStatus === 'In Progress') && !props.needsApproval && props.assignedTo !== "" && !props.needsMoreDetail) ? (
                                 <div>
-                                    <Button variant="success" className="buttons" onClick={ () => unassignRequest()}>
+                                    <Button variant="success" className="buttons" onClick={ () => approveBookRequest()}>
                                         Approve Book Request
                                     </Button>
-                                    <h1> An Authorisor has approved this request</h1>
+                                    <Button variant="danger" className="buttons" onClick={ () => denyBookRequest()}>
+                                        Deny (Cancel) Book Request
+                                    </Button>
                                 </div>
                                 
                             ) : (
                                 <></>
                             )}
-                            {((props.approvalStatus === 'Denied' || props.approvalStatus === 'In Progress') && !props.needsAuthorizer) ? (
-                                <div>
-                                <Button variant="danger" className="buttons" onClick={ () => unassignRequest()}>
-                                    Deny Book Request
-                                </Button>
-                                <h1> An Authorisor has denied this request</h1>
-                            </div>
-                            ) : (
-                                <></>
+                            {(props.approvalStatus === 'Approved') ? (
+                                <>
+                                    <h1> An Authorisor has Approved this request</h1>
+                                    <Button variant="success" className="buttons" onClick={ () => approveBookRequest()}>
+                                        Approve Book Request
+                                    </Button>
+                                    </>
+                                ) : (
+                                <> </>
+                            )}
+                            {(props.approvalStatus === 'Denied') ? (
+                                <>
+                                    <h1> An Authorisor has denied this request</h1>
+                                    <Button variant="danger" className="buttons" onClick={ () => denyBookRequest()}>
+                                        Deny (Cancel) Book Request
+                                    </Button>
+                                </>
+                                ) : (
+                                <> </>
                             )}
                             
                         </div>
@@ -373,7 +375,7 @@ export default function AssignedReport(props) {
                             <Button variant="success" className="buttons" onClick={ () => giveAdminApproval()}>
                                 Approve Request
                             </Button>
-                            <Button variant="danger" className="buttons" onClick={ () => giveAdminApproval()}>
+                            <Button variant="danger" className="buttons" onClick={ () => denyApproval()}>
                                 Deny Request
                             </Button>
                             

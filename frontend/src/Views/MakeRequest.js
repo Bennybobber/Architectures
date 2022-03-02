@@ -9,7 +9,6 @@ export default function MakeRequest() {
     const [isAuthenticated, userHasAuthenticated] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [succMsg, setSuccMsg] = useState("");
-
     const [bookName, setBookName] = useState("");
     const [bookDesc, setBookDesc] = useState("");
     const [bookPrice, setBookPrice] = useState("");
@@ -19,6 +18,7 @@ export default function MakeRequest() {
     useEffect(() => {
         onLoad();
     }, []);
+    // Retrieve the user from storage to see if they're logged in.
     async function onLoad() {
         try {
             let user = JSON.parse(localStorage.getItem('user'));
@@ -33,9 +33,22 @@ export default function MakeRequest() {
         catch(e) {
         }
     }
+    // Ensures that a book name has been given to a request
     function validateForm() {
-        return bookName.length > 0;
-      }   
+        return (bookName.length > 0);
+      }
+
+    // Validate the price to only be a number with 1 decimal point
+    function validatePrice(e) {
+        //eslint-disable-next-line
+        var regexp = /^[0-9\b\.]+$/;
+        if (e.target.value === "" || regexp.test(e.target.value))
+            if(e.target.value.split(".").length -1 <= 1){
+                setBookPrice(e.target.value);
+            }
+            
+    }  
+    // If they're authenticated show them the form, otherwise tell them they're unauthorised.
     if (isAuthenticated){
         return (
             <div className="Form">
@@ -81,7 +94,7 @@ export default function MakeRequest() {
                             type="bookPrice"
                             maxLength= "32"
                             value = {bookPrice}
-                            onChange = {(e) => setBookPrice(e.target.value)}
+                            onChange = {(e) => validatePrice(e)}
                         />
                     </Form.Group>
                     <Form.Group size="lg" controlId = "bookGenre">
@@ -94,16 +107,21 @@ export default function MakeRequest() {
                             onChange = {(e) => setBookGenre(e.target.value)}
                         />
                     </Form.Group>
-                    <Button block size="lg" type="submit" disabled={!validateForm()} >
+                    <Button block id='submit' size="lg" type="submit" disabled={!validateForm()} >
                         Submit Request
                     </Button>
                     <>
 
                         { errMsg ? (
                             <h3 className="error"> { errMsg } </h3>
-                            ) : (
+                        ) : (
+                            <> </>
+                        ) }
+                        { succMsg ? (
                             <h3 className="success"> {succMsg} </h3>
-                            ) }
+                        ) : (
+                            <> </>
+                        )} 
                     </>
                         
                 </Form>
@@ -116,8 +134,6 @@ export default function MakeRequest() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(event);
-        console.log(bookName);
         try{
             axios.post(`http://localhost:3001/api/requests`,
               {

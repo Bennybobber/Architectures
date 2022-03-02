@@ -8,6 +8,7 @@ import Login from "./Views/Login";
 import Register from "./Views/Register"
 import ManageAccounts from "./Views/ManageAccounts";
 import CreateAccount from "./Views/CreateAccount";
+import CompletedRequests from "./Views/completedRequests";
 
 export default function Routes() {
   return (
@@ -32,6 +33,9 @@ export default function Routes() {
       </Route>
       <Route exact path ="/account/create">
         <CreateAccount /> 
+      </Route>
+      <Route exact path ="/requests/approved">
+        <CompletedRequests/>
       </Route>
       <Route>
         <NotFound />

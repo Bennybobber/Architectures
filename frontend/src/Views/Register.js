@@ -14,6 +14,7 @@ export default function Register() {
   
   const [errMsg, setErrMsg] = useState("");
   
+  // Move to home screen if they're authenitcated.
   useEffect(() => {
     onLoad();
     async function onLoad() {
@@ -26,14 +27,13 @@ export default function Register() {
   }, [isAuthenticated]);
   
   
-
+  // Ensure that they've given a username and  password.
   function validateForm() {
     return username.length > 0 && password.length > 0;
   }
-
+  // Submits the users details to the server, if they're valid will be issued with a web token.
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(event);
     try{
     axios.post(`http://localhost:3001/api/register`,
       {
@@ -50,6 +50,7 @@ export default function Register() {
         if (res.status === 201){
           const persons = res.data;
           const user = persons
+          // Store the user token in localStorage
           localStorage.setItem('user', JSON.stringify(user));
           userHasAuthenticated(true);
           window.location = '/';
@@ -101,7 +102,7 @@ export default function Register() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <Button block size="lg" type="submit" id='register' disabled={!validateForm()}>
           Register
         </Button>
         { errMsg &&

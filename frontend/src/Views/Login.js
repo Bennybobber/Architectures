@@ -9,7 +9,6 @@ export default function Login() {
   const { isAuthenticated ,userHasAuthenticated } = useAppContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  
   const [errMsg, setErrMsg] = useState("");
   
   useEffect(() => {
@@ -24,16 +23,15 @@ export default function Login() {
   }, [isAuthenticated]);
   
  
-
+  // Ensures that a username and a password has been entered.
   function validateForm() {
     return username.length > 0 && password.length > 0;
   }
-
+  // Submits the login details to the server for verification.
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(event);
     try{
-    axios.post(`http://localhost:3001/api/login`,
+      axios.post(`http://localhost:3001/api/login`,
       {
         username:username,
         password:password
@@ -41,13 +39,13 @@ export default function Login() {
       {
         validateStatus: false
       } 
-    )
+      )
       .then(res => {
         console.log(res.data);
         if (res.status === 200){
           const persons = res.data;
           const user = persons
-          console.log(user);
+          // Store the user token in localstorage. 
           localStorage.setItem('user', JSON.stringify(user));
           userHasAuthenticated(true);
           window.location = '/';
@@ -64,9 +62,9 @@ export default function Login() {
 
   return (
     <div className="Form">
-      <h1>Login Form</h1>
+      <h1 id='header'>Login Form</h1>
       <Form onSubmit={handleSubmit}>
-        <Form.Group size="lg" controlId="email">
+        <Form.Group size="lg" controlId="username">
           <Form.Label>Username</Form.Label>
           <Form.Control
             autoFocus
@@ -83,7 +81,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <Button block size="lg" type="submit" id="login" disabled={!validateForm()}>
           Login
         </Button>
         { errMsg &&

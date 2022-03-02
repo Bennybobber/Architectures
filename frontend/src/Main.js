@@ -28,12 +28,14 @@ function Main() {
 
         const date = new Date();
         const token = jwt_decode(user.token);
-        console.log(token);
         
         if ((date.getTime()/1000) > token.exp ){
           await userHasAuthenticated(false);
           localStorage.removeItem('user');
-          history.push("/login");
+          if (window.location.pathname !== '/'){
+            history.push("/login")
+          }
+          
         }else {
           await userHasAuthenticated(true);
           if (user.isEmployee) {
@@ -65,11 +67,11 @@ function Main() {
     <div className="App container py-3">
       <Navbar collapseOnSelect bg="light" expand="md" className="mb-3">
         <LinkContainer to="/">
-          <Navbar.Brand className="font-weight-bold text-muted">
+          <Navbar.Brand id='home' className="font-weight-bold text-muted">
             Home
           </Navbar.Brand>
         </LinkContainer>
-        <LinkContainer to ="/makeRequest">
+        <LinkContainer id='make-request' to ="/makeRequest">
           {!isEmployee && !isAuthorizer && isAuthenticated ? (
             <Nav.Link>Make Request</Nav.Link>
           ) : (
@@ -77,7 +79,7 @@ function Main() {
             </>
           )}
         </LinkContainer>
-        <LinkContainer to="/requests">
+        <LinkContainer id='requests' to="/requests">
         {isAuthenticated ? (
             <Nav.Link>Requests</Nav.Link>
             ) : (
@@ -85,6 +87,13 @@ function Main() {
               </>
             )}
             
+        </LinkContainer>
+        <LinkContainer id='approved-requests' to ="/requests/approved">
+          {isAuthenticated && !isEmployee && !isAuthorizer ? (
+            <Nav.Link> View Approved Requests </Nav.Link>
+          ) : (
+            <> </>
+          )}
         </LinkContainer>
         <LinkContainer to="/admin/users">
           {isAuthorizer ? (
@@ -109,16 +118,16 @@ function Main() {
           <Nav activeKey={window.location.pathname}>
           {isAuthenticated ? (
             <div className="login">
-            <p className="username"> Welcome, {username} </p>
+            <p className="username" id="user"> Welcome, {username} </p>
             <p className="username"> ({accountType}) </p>
             <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
             </div>
             ) : (
               <>
-                <LinkContainer to="/register">
+                <LinkContainer id = 'register-link ' to="/register">
                   <Nav.Link>Register</Nav.Link>
                 </LinkContainer>
-                <LinkContainer to="/login">
+                <LinkContainer id = 'login-link' to="/login">
                   <Nav.Link>Login</Nav.Link>
                 </LinkContainer>
               </>
@@ -132,12 +141,13 @@ function Main() {
       
     </div>
   );
+  // Removes user from the localstorage, and directs them to the login page.
   function handleLogout() {
     localStorage.setItem('user', '');
     userHasAuthenticated(false);
     setAuthorizor(false);
     setEmployee(false);
-    history.push("/");
+    history.push("/login");
   }
   
 }

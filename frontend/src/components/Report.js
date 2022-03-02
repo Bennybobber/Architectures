@@ -16,40 +16,44 @@ export default function Report(props) {
     const [bookPrice, setBookPrice] = useState(props.bookPrice);
     const [bookGenre, setBookGenre] = useState(props.bookGenre);
     const [bookAuthor, setBookAuthor] = useState(props.bookAuthor);
+
+    // Sends a request to cancel the current book request
     const cancelRequest = () =>{
-        if (window.confirm("Are you sure you want to delete this request?")){ 
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+        try{
+            if (window.confirm("Are you sure you want to delete this request?")){ 
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
                 }
-            
-            }
-            try{
                 axios.delete(url, config)
                 .then(res => {
                     console.log(res);
                     window.location.reload(false);
                 })
             }
-            catch (err) {
-                alert(err.message);
-            }
         }
+        catch (err) {
+            alert(err.message);
+        }
+        
     }
+    // Moves the request back to the review stage
     const  moveBackToReview = () => {
-        if (window.confirm("Are you sure you want to move this back onto the queue for review?")){ 
-            const data = {
-                needsMoreDetail: false,
-            }
-            const config = {
-                headers: {
-                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+        try{
+            if (window.confirm("Are you sure you want to move this back onto the queue for review?")){ 
+                const data = {
+                    needsMoreDetail: false,
                 }
+                const config = {
+                    headers: {
+                        'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                    }
                 
-            }
-            const url = (`http://localhost:3001/api/requests/` + props.bookId);
-            try{
+                }
+                const url = (`http://localhost:3001/api/requests/` + props.bookId);
+            
                 axios.patch(url, data, config)
                 .then(res => {
                     setSuccMsg("Moved back to queue");
@@ -60,31 +64,41 @@ export default function Report(props) {
                   setErrMsg(err.data);
                 })
             }
-            catch (error){
-                console.log()
-            }
+        }
+        catch (error){
+            console.log()
         }
     }
-    function handleSubmit(event) {
-        event.preventDefault();
-        console.log(event);
-        console.log(bookName);
-        setIsEdit(false);
-        const data = {
-            bookName:bookName,
-            bookDesc:bookDesc,
-            bookGenre: bookGenre,
-            bookPrice: bookPrice,
-            bookAuthor: bookAuthor,
-        }
-        const config = {
-            headers: {
-                'x-access-token': JSON.parse(localStorage.getItem('user')).token
+    //Ensure that the price is a number with only 1 decimal
+    function validatePrice(e) {
+        //eslint-disable-next-line
+        var regexp = /^[0-9\b\.]+$/;
+        if (e.target.value === "" || regexp.test(e.target.value))
+            if(e.target.value.split(".").length -1 <= 1){
+                setBookPrice(e.target.value);
             }
             
-          }
-        const url = (`http://localhost:3001/api/requests/` + props.bookId);
+    }
+    // Sends the edited request to be saved.
+    function handleSubmit(event) {
+        event.preventDefault();
+        
         try{
+            setIsEdit(false);
+            const data = {
+                bookName:bookName,
+                bookDesc:bookDesc,
+                bookGenre: bookGenre,
+                bookPrice: bookPrice,
+                bookAuthor: bookAuthor,
+            }
+            const config = {
+                headers: {
+                    'x-access-token': JSON.parse(localStorage.getItem('user')).token
+                }
+            
+            } 
+            const url = (`http://localhost:3001/api/requests/` + props.bookId);
             axios.patch(url, data, config)
               .then(res => {
                 console.log(res.data);
@@ -96,14 +110,13 @@ export default function Report(props) {
                   setErrMsg(res.data);
                 }
               })
-            } catch (err) {
-              alert(err.message);
-              setErrMsg(err.data);
-            }
-          
+        } catch (err) {
+            alert(err.message);
+            setErrMsg(err.data);
+        }   
     }
     
-        return(
+    return(
         <div className ="request">
             <h1> Book Request for {props.bookName} </h1>
             
@@ -148,7 +161,7 @@ export default function Report(props) {
                             type="bookPrice"
                             maxLength= "32"
                             value = {bookPrice}
-                            onChange = {(e) => setBookPrice(e.target.value)}
+                            onChange = {(e) => validatePrice(e)}
                         />
                     </Form.Group>
                     <Form.Group size="lg" controlId = "bookGenre">
@@ -164,14 +177,7 @@ export default function Report(props) {
                     <Button block size="lg" type="submit" >
                         Submit Request
                     </Button>
-                    <>
-
-                        { errMsg ? (
-                            <h3 className="error"> { errMsg } </h3>
-                            ) : (
-                            <h3 className="success"> {succMsg} </h3>
-                            ) }
-                    </>      
+                       
                 </Form>
                         </div>
                 ) : (
@@ -196,21 +202,39 @@ export default function Report(props) {
                                 </tr>
                             </tbody>
                         </Table>
+                        <>
+
+                        { errMsg ? (
+                            <h3 className="error"> { errMsg } </h3>
+                            ) : (<></>)}
+                        { succMsg ? (
+                            <h3 className="success"> {succMsg} </h3>
+                            ) : (<></>)}
+                    </>   
                         <div className = "buttonBox">
-                            
                             {(props.assignedTo !== "" && !props.needsMoreDetail) ? (
-                                <h1> Request is being processed... </h1>
+                                props.approved ? (
+                                    <></>
+                                ) : (
+                                    <h1> Request is being processed...</h1>
+                                )
+                                
                             ) : (
-                                <div>
-                                <Button variant="success" className="buttons"  onClick={ () => setIsEdit(true)}>
-                                    Edit Book Request
-                                </Button>
-                                <Button variant="danger" className="buttons"  onClick={ () => cancelRequest()}>
-                                Cancel Request
-                                </Button>
-                                </div>
+                                props.approved ? (
+                                    <>
+                                    </>
+                                ) : (
+                                    <div>
+                                        <Button variant="success" className="buttons"  onClick={ () => setIsEdit(true)}>
+                                            Edit Book Request
+                                        </Button>
+                                        <Button variant="danger" id= {'cancel-'+bookName} className="buttons"  onClick={ () => cancelRequest()}>
+                                            Cancel Request
+                                        </Button>
+                                    </div>
+                                )
                             )}
-                            {props.needsMoreDetail ? (
+                            {props.needsMoreDetail && !props.approved ? (
                                 <Button variant="info" className="buttons" onClick={ () => moveBackToReview()}>
                                     Notify Edits Have Been Made
                                 </Button>

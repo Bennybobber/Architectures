@@ -1,5 +1,6 @@
 // ./src/index.js
-require('dotenv').config();
+
+
 // importing the dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,6 +9,9 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const mongoose = require("mongoose");
 const routes = require("./routes");
+
+const dotenv = require('dotenv')
+dotenv.config();
 // defining the Express app
 const app = express();
 // adding Helmet to enhance your API's security
@@ -16,32 +20,45 @@ app.use(helmet());
 // using bodyParser to parse JSON bodies into JS objects
 app.use(bodyParser.json());
 
-// enabling CORS for all requests
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
 
-
-// adding morgan to log HTTP requests
-
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+	methods: ['GET', 'POST']
+  }
+});
 
 // start the in-memory MongoDB instance
-console.log(process.env.API_PORT);
+io.on('connection', (socket) => {
+	socket.on("message", (msg) => {
+		console.log(msg);
+		io.emit('message', msg)
+	})
+})
 mongoose
 	.connect(process.env.MONGO_URI,
 		{ 
 			useNewUrlParser: true,
 		})
 	.then(() => {
-		const app = express()
-    	app.use(express.json())
-		app.use(cors());
-		app.use(morgan('combined'));
-    	app.use("/api", routes);
-
-		app.listen(process.env.API_PORT, () => {
-			console.log("Server has started!")
-		})
+    	
+		
 	})
 	.catch((error) => {
 		console.log("database connection failed. exiting now...");
 		console.error(error);
 		process.exit(1);
 	  });
+
+app.use(express.json())
+app.use(cors());
+app.use(morgan('combined'));
+app.use("/api", routes);
+const api = server.listen(process.env.API_PORT, () => {
+	console.log("Server has started on port: " + process.env.API_PORT)
+})
+
+module.exports = api;
