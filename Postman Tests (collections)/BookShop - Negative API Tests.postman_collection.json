@@ -1,0 +1,1107 @@
+{
+	"info": {
+		"_postman_id": "17ada969-d4f4-474e-b21a-95ddff074f69",
+		"name": "BookShop - Negative API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "No Password Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.badRequest;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains new user data\", function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Missing fields from request\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"username\": \"{{username}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "No Username Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.badRequest;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains new user data\", function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Missing fields from request\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register A New Client Account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonBody = pm.response.json();\r",
+							"pm.collectionVariables.set(\"clientUserID\", jsonBody._id);\r",
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains new user data\", function() {\r",
+							"    pm.expect(jsonBody).have.property('firstName', 'Tim');\r",
+							"    pm.expect(jsonBody).have.property('lastName', 'Larybabs');\r",
+							"    pm.expect(jsonBody).have.property('isEmployee', false);\r",
+							"    pm.expect(jsonBody).have.property('isAuthorizer', false);\r",
+							"    pm.expect(jsonBody).have.property('_id', pm.collectionVariables.get('clientUserID'))\r",
+							"    pm.expect(jsonBody).have.property('token');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Username already exists test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format test\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Already Exists\", function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"User Already Exists. Please Login\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unauthorised attempt at making a book request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format test\", function () {\r",
+							"    pm.response.to.be.forbidden;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Already Exists\", function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"A token is required for authentication\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookName\": \"{{bookName}}\",\r\n    \"bookAuthor\": \"{{bookAuthor}}\",\r\n    \"bookDesc\": \"{{bookDesc}}\",\r\n    \"bookGenre\": \"{{bookGenre}}\",\r\n    \"bookPrice\": \"{{bookPrice}}\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/requests",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login with an Admin Account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonBody = pm.response.json();\r",
+							"pm.collectionVariables.set(\"adminUserID\", jsonBody._id);\r",
+							"pm.collectionVariables.set(\"token\", jsonBody.token);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains Valid User Information\", function() {\r",
+							"    pm.expect(jsonBody).have.property('username', pm.collectionVariables.get('adminUsername'));\r",
+							"    pm.expect(jsonBody).have.property('firstName');\r",
+							"    pm.expect(jsonBody).have.property('lastName');\r",
+							"    pm.expect(jsonBody).have.property('isEmployee', false);\r",
+							"    pm.expect(jsonBody).have.property('isAuthorizer', true);\r",
+							"    pm.expect(jsonBody).have.property('_id');\r",
+							"    pm.expect(jsonBody).have.property('token');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{adminUsername}}\",\r\n    \"password\": \"{{adminPassword}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login with Client account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonBody = pm.response.json();\r",
+							"pm.collectionVariables.set(\"clientUserID\", jsonBody._id);\r",
+							"pm.collectionVariables.set(\"token\", jsonBody.token);\r",
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains Valid User Information\", function() {\r",
+							"    pm.expect(jsonBody).have.property('username', pm.collectionVariables.get('username'));\r",
+							"    pm.expect(jsonBody).have.property('firstName', pm.collectionVariables.get('firstName'));\r",
+							"    pm.expect(jsonBody).have.property('lastName', pm.collectionVariables.get('lastName'));\r",
+							"    pm.expect(jsonBody).have.property('isEmployee', false);\r",
+							"    pm.expect(jsonBody).have.property('isAuthorizer', false);\r",
+							"    pm.expect(jsonBody).have.property('_id', pm.collectionVariables.get(\"clientUserID\"));\r",
+							"    pm.expect(jsonBody).have.property('token');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create A Book Request The Client",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonBody = pm.response.json();\r",
+							"pm.collectionVariables.set(\"bookID\", jsonBody._id);\r",
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains expected book request data\", function() {\r",
+							"    pm.expect(jsonBody).have.property('bookName', pm.collectionVariables.get('bookName'));\r",
+							"    pm.expect(jsonBody).have.property('bookDesc', pm.collectionVariables.get('bookDesc'));\r",
+							"    pm.expect(jsonBody).have.property('bookGenre', pm.collectionVariables.get('bookGenre'));\r",
+							"    pm.expect(jsonBody).have.property('bookPrice', pm.collectionVariables.get('bookPrice'));\r",
+							"    pm.expect(jsonBody).have.property('bookAuthor', pm.collectionVariables.get('bookAuthor'));\r",
+							"    pm.expect(jsonBody).have.property('date');\r",
+							"    pm.expect(jsonBody).have.property('userId');\r",
+							"    pm.expect(jsonBody).have.property('approvalStatus', 'In Progress');\r",
+							"    pm.expect(jsonBody).have.property('assignedTo', '');\r",
+							"    pm.expect(jsonBody).have.property('needsMoreDetail', false);\r",
+							"    pm.expect(jsonBody).have.property('needsAuthorizer', false);\r",
+							"    pm.expect(jsonBody).have.property('isProcessed', false);\r",
+							"    pm.expect(jsonBody).have.property('_id');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookName\": \"{{bookName}}\",\r\n    \"bookAuthor\": \"{{bookAuthor}}\",\r\n    \"bookDesc\": \"{{bookDesc}}\",\r\n    \"bookGenre\": \"{{bookGenre}}\",\r\n    \"bookPrice\": \"{{bookPrice}}\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/requests",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Make changes to a book that doesn't exist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.notFound;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Book request not found\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Book Request not found\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"needsMoreDetail\": true,\r\n    \"bookGenre\": \"History\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/requests/57283572986",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"requests",
+						"57283572986"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET retrieve the specific book request as a client Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.notFound;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Not Found Message\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Book Request not found\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/requests/105721",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"requests",
+						"105721"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Handling unauthorised access to patching a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.unauthorized;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Not Authorised Test\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Not Authorised For This Request, Must Be Admin\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"lastName\":\"Garfield\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/{{clientUserID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"{{clientUserID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Client attempts to get list of all requests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.unauthorized;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Unauthorised Message Returned\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Not Authorised For This Request\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/users/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Client attempts to get another users account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.unauthorized;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"No Permission Message Returned\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"You do not have permission for this action.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/users/{{adminUserID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"{{adminUserID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deleting a book that doesn't exist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Book Request Not Found Test\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.notFound;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Invalid Token Message\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Book Request not found\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/requests/436346346",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"requests",
+						"436346346"
+					]
+				},
+				"description": "Should Sucessfully delete the book request."
+			},
+			"response": []
+		},
+		{
+			"name": "Unauthorised attempting to delete a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.unauthorized;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Unauthorised Message Returned\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Not Authorised For This Request, Must Be Admin\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/users/{{clientUserID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"{{clientUserID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login with Admin Account To Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonBody = pm.response.json();\r",
+							"pm.collectionVariables.set(\"adminUserID\", jsonBody._id);\r",
+							"pm.collectionVariables.set(\"token\", jsonBody.token);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains Valid User Information\", function() {\r",
+							"    pm.expect(jsonBody).have.property('username', pm.collectionVariables.get('adminUsername'));\r",
+							"    pm.expect(jsonBody).have.property('firstName');\r",
+							"    pm.expect(jsonBody).have.property('lastName');\r",
+							"    pm.expect(jsonBody).have.property('isEmployee', false);\r",
+							"    pm.expect(jsonBody).have.property('isAuthorizer', true);\r",
+							"    pm.expect(jsonBody).have.property('_id');\r",
+							"    pm.expect(jsonBody).have.property('token');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{adminUsername}}\",\r\n    \"password\": \"{{adminPassword}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Attempt to change a non-existant user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status test\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response format JSON test\", function () {\r",
+							"    pm.response.to.be.notFound;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"pm.test(\"User doesn't exist\" , function() {\r",
+							"    pm.expect(pm.response.text()).to.include(\"User doesn't exist!\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"lastName\":\"Garfield\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/75674654654",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"75674654654"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete The New User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User Successfully Deleted\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/users/{{clientUserID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"{{clientUserID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Successful Deletion Of New Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Book Request Successfully Deleted\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/requests/{{bookID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"requests",
+						"{{bookID}}"
+					]
+				},
+				"description": "Should Sucessfully delete the book request."
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "firstName",
+			"value": "Tim",
+			"type": "string"
+		},
+		{
+			"key": "lastName",
+			"value": "Larybabs",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "timmothy",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "bigSalad28",
+			"type": "string"
+		},
+		{
+			"key": "clientUserID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminUsername",
+			"value": "bennybobber",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "Salad",
+			"type": "string"
+		},
+		{
+			"key": "bookName",
+			"value": "The Large Knowledge",
+			"type": "string"
+		},
+		{
+			"key": "bookDesc",
+			"value": "Find out about how big knowledge can really be!",
+			"type": "string"
+		},
+		{
+			"key": "bookAuthor",
+			"value": "Arnold Kliopoi",
+			"type": "string"
+		},
+		{
+			"key": "bookGenre",
+			"value": "Horror",
+			"type": "string"
+		},
+		{
+			"key": "bookPrice",
+			"value": "12.00",
+			"type": "string"
+		},
+		{
+			"key": "bookID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminUserID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

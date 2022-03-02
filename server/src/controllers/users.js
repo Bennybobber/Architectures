@@ -1,21 +1,31 @@
 const User = require('../models/User');
 const  bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+/**
+ * getUsers | Retrieves a list of user objects without their passwords attached.
+ * @param  {Object} req	| An Object sent via the HTTP request
+ * @return {Object} users | A list of all the user objects returned from the database.
+ */
 const getUsers = ( async (req, res) =>  {
     try{
 		const users = await User.find().select("-password");
-		res.send(users);
+		return res.send(users);
 	} catch (error){
-		res.status(500);
-		res.send({ error: 'Server Error Occured'});
+		return res.status(500).send({ error: 'Server Error Occured'});
 	}
 })
 
+/**
+ * createUser | Creates a new user object and stores it in the database.
+ * @param  {Object} req	| An Object sent via the HTTP request.
+ * @return {Object} message | A message informing how the request finished.
+ */
 const createUser = ( async (req, res) => {
     try{
 		// Validate user input
 		if (!(req.body.username && req.body.password && req.body.firstName && req.body.lastName)) {
-			res.status(400).send("Missing fields from request");
+			return res.status(400).send("Missing fields from request");
 		  }
 		const oldUser = await User.findOne({ username: req.body.username });
     	if (oldUser) {
@@ -28,67 +38,91 @@ const createUser = ( async (req, res) => {
 			firstName: req.body.firstName,
 			lastName: req.body.lastName,
 			password: encryptedPassword,
-			username: req.body.username.toLowerCase(),
+			username: req.body.username,
 			isEmployee: req.body.isEmployee,
 			isAuthorizer: req.body.isAuthorizer,
 		})
 		await user.save();
-		res.status(201);
-		res.send({message:"User Successfully Created"});
+		return res.status(201).send("User successfully created")
 	} catch (error) {
-		res.status(500);
-		res.send({error: error});
+		return res.status(500).send({error: error});
 	}
 })
 
+/**
+ * getSpecificUser | Returns a specific user from the database based on a given user ID
+ * @param  {Object} req	| An Object sent via the HTTP request.
+ * @return {Object} user | A User Object retrived from the database, without their password.
+ */
 const getSpecificUser = ( async (req, res) => {
     try {
-		const user = await User.findOne({ _id: req.params.username }).select("-password");
-		res.send(user)
+		if (req.user.isAuthorizer || req.user.isEmployee || req.user._id == req.params.id){
+			const user = await User.findOne({ _id: req.params.id }).select("-password");
+			if (user === null) return res.status(404).send('The requested user does not exist');
+			return res.status(200).send(user);
+
+		}else {
+			return res.status(401).send('You do not have permission for this action.');
+		}
+		
 	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
+		return res.status(404).send("User doesn't exist!");
 	}
 })
 
+/**
+ * deleteUser | Deletes a specific user from the database based on a given user ID.
+ * @param  {Object} req	| An Object sent via the HTTP request.
+ * @return {Object} message | A message informing the outcome of the request.
+ */
 const deleteUser = ( async (req, res) => {
     try {
 		await User.deleteOne({ _id: req.params.id })
-		res.status(204).send()
+		return res.status(204).send("Successfully deleted user");
 	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
+		return res.status(404).send("User doesn't exist!")
 	}
 })
 
+/**
+ * modifyUser | Modifies an existing user object and saves it to the database based on a given user ID.
+ * @param  {Object} req	| An Object sent via the HTTP request.
+ * @return {Object} user | An updated User object.
+ */
 const modifyUser = ( async (req, res) => {
     try {
-		const user = await User.findOneAndUpdate({ _id: req.params.id }, req.body);
-		res.status(204).send(user)
-	} catch {
-		res.status(404)
-		res.send({ error: "User doesn't exist!" })
+		await User.findOneAndUpdate({ _id: req.params.id }, req.body);
+		user = await User.findOne({ _id: req.params.id });
+		return res.status(200).send(user);
+	} catch (error) {
+		console.log(error.message);
+		if(error.message.includes("duplicate key error")) {
+			return res.status(409).send("Username Already In Use");
+		}
+		return res.status(404).send("User doesn't exist!");
 	}
 })
 
+/**
+ * registerUser | Registers a new user object and saves it into the database.
+ * @param  {Object} req	| An Object sent via the HTTP request.
+ * @return {Object} user | The new user object created, that contains an access token.
+ */
 const registerUser = (async (req, res) => {
 	// Our register logic starts here
 	try {
 		// Get user input
 		const { firstName, lastName, username, password } = req.body;
-	
-		
+
 		// Validate user input
 		if (!(username && password && firstName && lastName)) {
-		  res.status(400).send("Missing fields from request");
+		  return res.status(400).send("Missing fields from request");
 		}
 	
 		// check if user already exist
 		// Validate if user exist in our database
 		const oldUser = await User.findOne({ username });
-		console.log(username);
 		if (oldUser) {
-		  
 		  return res.status(409).send("User Already Exists. Please Login");
 		}
 	
@@ -114,23 +148,28 @@ const registerUser = (async (req, res) => {
 		user.token = token;
 		user.password = undefined;
 		// return new user
-		console.log(user);
-		res.status(201).json(user);
+		return res.status(201).send(user);
 	  } catch (err) {
 		console.log(err);
-		res.status(500).send("An Interal Error Has Occured");
+		return res.status(500).send("An Interal Error Has Occured");
+		
 	  }
 })
 
+/**
+ * loginUser | Issues a token to the user, which can be used for authentication.
+ * @param  {Object} req	| An Object sent via the HTTP request.
+ * @return {Object} user | The modified user object with a fresh token.
+ */
 const loginUser = (async (req, res) => {
 	try {
-		// Get user input
 		const { username, password } = req.body;
-	
 		// Validate user input
 		if (!(username && password)) {
-		  res.status(400).send("Additional input is required");
+		  return res.status(400).send("Additional input is required");
 		}
+		// Get user input
+		
 		// check to see if user exists in the database
 		const user = await User.findOne({ username });
 	
@@ -149,13 +188,14 @@ const loginUser = (async (req, res) => {
 		  // remove the password since it's not needed at the frontend
 		  user.password = undefined;
 		  // user
-		  res.status(200).json(user);
+		  return res.status(200).json(user);
+		}else{
+			return res.status(404).send("Invalid Credentials");
 		}
-		res.status(404).send("Invalid Credentials");
-	  } catch (err) {
+	}catch (err) {
 		console.log(err);
-		res.status(500).send("Internal Server Error");
-	  }
+		return res.status(500).send("Internal Server Error");
+	}
 })
 module.exports = {
     getUsers,

@@ -1,8 +1,13 @@
 const User = require('./models/User');
 const bookRequest = require('./models/Request')
 const mongoose = require('mongoose');
+const dotenv = require('dotenv')
+dotenv.config();
 
-
+/**
+ * depopulateDB | A script function that deletes all the
+ * pre-created objects that were populated in populateDB.js
+ */
 async function depopulateDB() {
     try{
         await User.deleteOne({username: 'tim10'});
@@ -21,7 +26,7 @@ async function depopulateDB() {
 
 }
 mongoose 
-    .connect("mongodb+srv://beb:bennybobber22@cluster0.sny8t.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
+    .connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
     })   
     .then(() => {
